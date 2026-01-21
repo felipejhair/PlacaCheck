@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String?  @unique
+  name      String
+  avatar    String?
+  provider  String   // "google", "facebook", "guest", "email"
+  password  String?  // For email auth
+  salt      String?  // For password hashing
+  verificationCode String? // For OTP
+  verificationCodeExpiresAt DateTime? // OTP Expiry
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  
+  reviews   Review[]
+  favorites Favorite[]
+}
+
+model Plate {
+  id           Int      @id @default(autoincrement())
+  licensePlate String   @unique // Almacenada sin guiones y en mayúsculas (ej: "ABC1234")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reviews   Review[]
+  favorites Favorite[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  text      String   @db.Text
+  tags      String?  // JSON stringified array of tags e.g. '["Veloz", "Amable"]'
+  createdAt DateTime @default(now())
+  isAnonymous Boolean @default(false)
+
+  plateId   Int
+  plate     Plate    @relation(fields: [plateId], references: [id])
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([plateId])
+  @@index([userId])
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  plateId   Int
+  plate     Plate    @relation(fields: [plateId], references: [id])
+
+  @@unique([userId, plateId]) // Unique constraint to prevent duplicate favorites
+  @@index([userId])
+  @@index([plateId])
+}
