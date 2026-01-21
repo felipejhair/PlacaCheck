@@ -51,17 +51,20 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
                 return;
             }
 
-            let result;
             if (mode === "register") {
-                result = await registerUser(formData.name, formData.email, formData.password);
+                const result = await registerUser(formData.name, formData.email, formData.password);
                 if (result.success && result.requireVerification) {
                     setMode("verify");
                     setIsLoading(false);
                     return;
                 }
-            } else {
-                result = await loginWithEmail(formData.email, formData.password);
+                setError(result.error || "Ocurrió un error");
+                setIsLoading(false);
+                return;
             }
+
+            // Login mode
+            const result = await loginWithEmail(formData.email, formData.password);
 
             if (result.success && result.user) {
                 const user = {
@@ -76,6 +79,7 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
             } else {
                 setError(result.error || "Ocurrió un error");
             }
+
         } catch (e) {
             setError("Error de conexión");
         } finally {
