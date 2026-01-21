@@ -31,11 +31,13 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 overflow-hidden relative transition-colors duration-500 bg-background">
 
-      {/* Settings Menu - Absolute Top Left */}
-      <SettingsMenu />
+      {/* Top Left Controls: Settings & Favorites */}
+      <div
+        style={{ top: 'calc(1.5rem + env(safe-area-inset-top))' }}
+        className="absolute left-6 z-50 flex items-center gap-4"
+      >
+        <SettingsMenu />
 
-      {/* Favorites Button - Bottom Right Floating or Top Left near Settings */}
-      <div className="absolute top-6 left-20 z-50">
         <Button
           variant="ghost"
           size="icon"
@@ -48,7 +50,7 @@ export default function Home() {
       </div>
 
       {/* Auth Control - Absolute Top Right */}
-      <div className="absolute top-6 right-6 z-50">
+      <div style={{ top: 'calc(1.5rem + env(safe-area-inset-top))' }} className="absolute right-6 z-50">
         {user ? (
           <UserMenu />
         ) : (
