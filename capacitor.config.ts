@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'PlacaCheck',
   webDir: 'public',
   server: {
-    url: 'http://172.20.10.3:3000',
+    url: 'https://placa-check.vercel.app',
     cleartext: true
   }
 };
