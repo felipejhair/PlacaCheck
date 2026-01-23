@@ -113,7 +113,6 @@ export default function Home() {
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value)}
                 maxLength={9}
-                autoFocus
               />
             </div>
           </div>

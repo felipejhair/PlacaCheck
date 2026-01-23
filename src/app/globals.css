@@ -80,7 +80,12 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground transition-colors duration-300 select-none;
+  }
+
+  input,
+  textarea {
+    @apply select-text;
   }
 }
 
@@ -88,9 +93,11 @@
   .pt-safe {
     padding-top: env(safe-area-inset-top);
   }
+
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
   .top-safe {
     top: env(safe-area-inset-top);
   }
