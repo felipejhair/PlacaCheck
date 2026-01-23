@@ -136,12 +136,12 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
 
                     {/* Header Title (Sticky) */}
                     <div className={cn(
-                        "absolute left-1/2 -translate-x-1/2 transition-all duration-500 transform",
-                        showStickyTitle ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+                        "absolute left-1/2 -translate-x-1/2 transition-all duration-500 transform pointer-events-none z-0",
+                        showStickyTitle ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
                     )}>
-                        <div className="bg-background/80 backdrop-blur-md px-4 py-1.5 rounded-full border shadow-sm flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                            <span className="font-bold font-mono tracking-widest text-sm">{placa}</span>
+                        <div className="bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full border shadow-sm flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                            <span className="font-bold font-mono tracking-widest text-xs truncate max-w-[120px]">{placa}</span>
                         </div>
                     </div>
 
@@ -176,7 +176,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                 </div>
             </header>
 
-            <main className="container max-w-lg mx-auto px-4 pt-20 space-y-8">
+            <main className="container max-w-lg mx-auto px-4 pt-28 space-y-8">
 
                 {/* Hero / Plate Visual */}
                 <section className="relative flex flex-col items-center justify-center py-8">
