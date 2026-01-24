@@ -13,9 +13,10 @@ export function PlateVisual({ placa, className }: { placa: string, className?: s
       </div>
 
       {/* Texto Placa - Dynamic Sizing */}
+      {/* Texto Placa - Dynamic Sizing */}
       <div className={cn(
-        "mt-4 font-mono font-black tracking-widest text-gray-900 drop-shadow-sm transition-all",
-        placa.length > 8 ? "text-3xl" : placa.length > 7 ? "text-4xl" : "text-5xl"
+        "mt-4 font-mono font-black tracking-widest text-gray-900 drop-shadow-sm transition-all whitespace-nowrap",
+        placa.length >= 8 ? "text-3xl" : placa.length >= 7 ? "text-4xl" : "text-5xl"
       )}>
         {placa.length > 3 && placa.indexOf('-') === -1
           ? `${placa.substring(0, 3)}-${placa.substring(3)}`
