@@ -122,10 +122,9 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
 
     return (
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_hsl(var(--gradient-start))_0%,_hsl(var(--background))_100%)] pb-32 transition-colors duration-500">
-            {/* Navbar Floating */}
             <header className={cn(
                 "fixed top-0 z-50 w-full p-4 pt-safe transition-all duration-500",
-                showStickyTitle ? "bg-background/80 backdrop-blur-md border-b" : "pointer-events-none"
+                showStickyTitle ? "bg-gradient-to-b from-background via-background/90 to-transparent backdrop-blur-md pb-8" : "pointer-events-none"
             )}>
                 <div className="container mx-auto max-w-lg flex items-center justify-between pointer-events-auto mt-2">
                     <Link href="/">
