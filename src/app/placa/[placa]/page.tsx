@@ -123,10 +123,10 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
     return (
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_hsl(var(--gradient-start))_0%,_hsl(var(--background))_100%)] pb-32 transition-colors duration-500">
             <header
-                style={{ maskImage: showStickyTitle ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : 'none', WebkitMaskImage: showStickyTitle ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : 'none' }}
+                style={{ maskImage: showStickyTitle ? 'linear-gradient(to bottom, black 85%, transparent 100%)' : 'none', WebkitMaskImage: showStickyTitle ? 'linear-gradient(to bottom, black 85%, transparent 100%)' : 'none' }}
                 className={cn(
-                    "fixed top-0 z-50 w-full p-4 pt-safe transition-all duration-500",
-                    showStickyTitle ? "bg-gradient-to-b from-background/60 via-background/40 to-transparent backdrop-blur-xl pb-12" : "pointer-events-none"
+                    "fixed top-0 z-50 w-full p-4 pt-safe transition-all duration-700 ease-in-out",
+                    showStickyTitle ? "bg-gradient-to-b from-background/90 via-background/70 to-transparent backdrop-blur-xl pb-12" : "pointer-events-none"
                 )}>
                 <div className="container mx-auto max-w-lg flex items-center justify-between pointer-events-auto mt-2">
                     <Link href="/">
@@ -137,8 +137,8 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
 
                     {/* Header Title (Sticky) */}
                     <div className={cn(
-                        "absolute left-1/2 -translate-x-1/2 transition-all duration-500 transform pointer-events-none z-0",
-                        showStickyTitle ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+                        "absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-in-out transform pointer-events-none z-0",
+                        showStickyTitle ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
                     )}>
                         <div className="bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full border shadow-sm flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
