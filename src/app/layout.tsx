@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FavoritesProvider } from "@/components/favorites-context";
 import { LanguageProvider } from "@/components/language-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -44,6 +45,7 @@ export default function RootLayout({
             <AuthProvider>
               <FavoritesProvider>
                 {children}
+                <Toaster />
               </FavoritesProvider>
             </AuthProvider>
           </LanguageProvider>

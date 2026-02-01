@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 import { useTheme } from "next-themes";
-import { Settings, Moon, Sun, Monitor, X, Shield } from "lucide-react";
+import { Settings, Moon, Sun, Monitor, X, Shield, MessageSquarePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 import { useLanguage } from "@/components/language-provider";
+import { SupportDialog } from "@/components/support-dialog";
 
 export function SettingsMenu() {
     const { theme, setTheme } = useTheme();
     const { language, setLanguage, t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
+    const [isSupportOpen, setIsSupportOpen] = useState(false);
 
     return (
         <div className="relative z-50">
@@ -127,11 +129,24 @@ export function SettingsMenu() {
                                         <span className="text-sm font-medium text-foreground/80">{t({ es: "Política de Privacidad", en: "Privacy Policy" })}</span>
                                     </Button>
                                 </Link>
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start h-10 px-3 gap-2 bg-transparent border-dashed"
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        setIsSupportOpen(true);
+                                    }}
+                                >
+                                    <MessageSquarePlus className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-foreground/80">{t({ es: "Soporte y Sugerencias", en: "Support & Feedback" })}</span>
+                                </Button>
                             </div>
                         </motion.div>
                     </>
                 )}
             </AnimatePresence>
+
+            <SupportDialog open={isSupportOpen} onOpenChange={setIsSupportOpen} />
         </div>
     );
 }

@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     const { t } = useLanguage();
 
     return (
-        <div className="min-h-screen bg-background p-6 pb-24">
+        <div className="min-h-screen bg-background p-6 pb-24 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
             <div className="max-w-2xl mx-auto space-y-8">
                 {/* Header */}
                 <header className="flex items-center gap-4 mb-8">
