@@ -2,16 +2,17 @@
 
 import { useState } from "react";
 import { useTheme } from "next-themes";
-import { Settings, Moon, Sun, Monitor, X } from "lucide-react";
+import { Settings, Moon, Sun, Monitor, X, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 import { useLanguage } from "@/components/language-provider";
 
 export function SettingsMenu() {
     const { theme, setTheme } = useTheme();
-    const { language, setLanguage } = useLanguage();
+    const { language, setLanguage, t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -74,7 +75,7 @@ export function SettingsMenu() {
                                         )}
                                     >
                                         <Moon className="w-5 h-5" />
-                                        <span className="text-[10px] font-medium">Oscuro</span>
+                                        <span className="text-[10px] font-medium">{t({ es: "Oscuro", en: "Dark" })}</span>
                                     </button>
                                     <button
                                         onClick={() => setTheme("system")}
@@ -84,7 +85,7 @@ export function SettingsMenu() {
                                         )}
                                     >
                                         <Monitor className="w-5 h-5" />
-                                        <span className="text-[10px] font-medium">Sistema</span>
+                                        <span className="text-[10px] font-medium">{t({ es: "Sistema", en: "System" })}</span>
                                     </button>
                                 </div>
                             </div>
@@ -115,6 +116,17 @@ export function SettingsMenu() {
                                         <span className="text-xs">English</span>
                                     </button>
                                 </div>
+                            </div>
+                            <div className="space-y-3 pt-2 border-t">
+                                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                    {t({ es: "Legal", en: "Legal" })}
+                                </label>
+                                <Link href="/privacidad" onClick={() => setIsOpen(false)}>
+                                    <Button variant="outline" className="w-full justify-start h-10 px-3 gap-2 bg-transparent border-dashed">
+                                        <Shield className="h-4 w-4 text-muted-foreground" />
+                                        <span className="text-sm font-medium text-foreground/80">{t({ es: "Política de Privacidad", en: "Privacy Policy" })}</span>
+                                    </Button>
+                                </Link>
                             </div>
                         </motion.div>
                     </>
