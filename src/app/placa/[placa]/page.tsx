@@ -12,6 +12,8 @@ import { useAuth } from "@/components/auth-provider";
 import { useFavorites } from "@/components/favorites-context";
 import { UserMenu } from "@/components/user-menu";
 import { getAvatarIcon } from "@/components/avatar-selector";
+import { useLanguage } from "@/components/language-provider";
+import { EmergencySheet } from "@/components/emergency-sheet";
 import { cn } from "@/lib/utils";
 
 interface Comment {
@@ -33,8 +35,12 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
     const [comments, setComments] = useState<Comment[]>([]);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+
+    // ... (in component)
     const [isLoading, setIsLoading] = useState(true);
     const [showStickyTitle, setShowStickyTitle] = useState(false);
+    const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -80,6 +86,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
     const totalRating = comments.reduce((acc, curr) => acc + curr.rating, 0);
     const averageRating = (comments.length > 0 ? (totalRating / comments.length) : 0).toFixed(1);
     const numericRating = parseFloat(averageRating);
+    const { t } = useLanguage();
 
     const handleSubmitReview = async (review: { rating: number; text: string; tags: string[]; isAnonymous: boolean }) => {
         // Login is optional now
@@ -97,13 +104,13 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                     isAnonymous: review.isAnonymous,
                     rating: result.review.rating,
                     text: result.review.text,
-                    date: "Justo ahora",
+                    date: t({ es: "Justo ahora", en: "Just now" }),
                     tags: review.tags,
                 };
                 setComments([newComment, ...comments]);
                 setIsReviewModalOpen(false);
             } else {
-                alert("Error al guardar la reseña. Intenta nuevamente.");
+                alert(t({ es: "Error al guardar la reseña. Intenta nuevamente.", en: "Error saving review. Please try again." }));
             }
         } catch (e) {
             console.error("Submit error", e);
@@ -159,6 +166,15 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                             <Heart className={cn("w-5 h-5", isFavorite(placa) && "fill-current")} />
                         </Button>
 
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsEmergencyOpen(true)}
+                            className="rounded-full bg-red-500/10 backdrop-blur-md shadow-sm border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-all"
+                        >
+                            <ShieldCheck className="w-5 h-5" />
+                        </Button>
+
                         {user ? (
                             <div className="bg-background/50 backdrop-blur-md rounded-full shadow-sm border border-border/50">
                                 <UserMenu />
@@ -170,7 +186,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                                 className="rounded-full font-semibold shadow-lg"
                             >
                                 <LogIn className="w-4 h-4 mr-2" />
-                                Acceder
+                                {t({ es: "Acceder", en: "Login" })}
                             </Button>
                         )}
                     </div>
@@ -194,7 +210,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                             <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
                         </div>
                         <span className="text-2xl font-bold tracking-tight">{averageRating}</span>
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Calificación</span>
+                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t({ es: "Calificación", en: "Rating" })}</span>
                     </div>
 
                     <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card/40 backdrop-blur-md border border-white/10 shadow-sm text-center space-y-1">
@@ -202,7 +218,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                             <MessageSquare className="w-5 h-5 text-blue-500" />
                         </div>
                         <span className="text-2xl font-bold tracking-tight">{comments.length}</span>
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Reportes</span>
+                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t({ es: "Reportes", en: "Reports" })}</span>
                     </div>
 
                     <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card/40 backdrop-blur-md border border-white/10 shadow-sm text-center space-y-1">
@@ -218,23 +234,23 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                             )}
                         </div>
                         <span className="text-sm font-bold pt-1 leading-none">
-                            {comments.length === 0 ? "Sin datos" : numericRating >= 4 ? "Seguro" : numericRating >= 2.5 ? "Precaución" : "Peligro"}
+                            {comments.length === 0 ? t({ es: "Sin datos", en: "No Data" }) : numericRating >= 4 ? t({ es: "Seguro", en: "Safe" }) : numericRating >= 2.5 ? t({ es: "Precaución", en: "Caution" }) : t({ es: "Peligro", en: "Danger" })}
                         </span>
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Estado</span>
+                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t({ es: "Estado", en: "Status" })}</span>
                     </div>
                 </section>
 
                 {/* Reviews Timeline */}
                 <section className="space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-bold">Actividad Reciente</h3>
-                        <span className="text-xs text-muted-foreground">{comments.length} opiniones</span>
+                        <h3 className="text-lg font-bold">{t({ es: "Actividad Reciente", en: "Recent Activity" })}</h3>
+                        <span className="text-xs text-muted-foreground">{comments.length} {t({ es: "opiniones", en: "reviews" })}</span>
                     </div>
 
                     {comments.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 opacity-50 bg-card/30 rounded-3xl border border-dashed">
                             <MessageSquare className="w-10 h-10" />
-                            <p className="text-sm font-medium">Sé el primero en reportar esta placa.</p>
+                            <p className="text-sm font-medium">{t({ es: "Sé el primero en reportar esta placa.", en: "Be the first to report this plate." })}</p>
                         </div>
                     ) : (
                         <div className="space-y-6 pl-4 border-l-2 border-primary/10 relative">
@@ -256,7 +272,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                                                 <div>
                                                     <div className="font-bold text-sm flex items-center gap-2">
                                                         {comment.user}
-                                                        {comment.isAnonymous && <span className="bg-secondary px-1.5 py-0.5 rounded text-[10px] text-muted-foreground font-medium">Anónimo</span>}
+                                                        {comment.isAnonymous && <span className="bg-secondary px-1.5 py-0.5 rounded text-[10px] text-muted-foreground font-medium">{t({ es: "Anónimo", en: "Anonymous" })}</span>}
                                                     </div>
                                                     <div className="text-xs text-muted-foreground">{comment.date}</div>
                                                 </div>
@@ -296,7 +312,7 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                         className="w-full h-14 text-lg font-bold shadow-xl shadow-primary/25 rounded-2xl transition-transform active:scale-95"
                         size="lg"
                     >
-                        Calificar esta placa
+                        {t({ es: "Calificar esta placa", en: "Rate this plate" })}
                     </Button>
                 </div>
             </div>
@@ -310,6 +326,10 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
             <LoginModal
                 isOpen={isLoginModalOpen}
                 onClose={() => setIsLoginModalOpen(false)}
+            />
+            <EmergencySheet
+                isOpen={isEmergencyOpen}
+                onClose={() => setIsEmergencyOpen(false)}
             />
         </div>
     );

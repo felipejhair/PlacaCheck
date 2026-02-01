@@ -10,6 +10,8 @@ import { UserMenu } from "@/components/user-menu";
 import { LoginModal } from "@/components/login-modal";
 import { SettingsMenu } from "@/components/settings-menu";
 import { FavoritesSheet } from "@/components/favorites-sheet";
+import { EmergencySheet } from "@/components/emergency-sheet";
+import { useLanguage } from "@/components/language-provider";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -18,6 +20,9 @@ export default function Home() {
   const { user, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
+
+  const { t } = useLanguage();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,9 +48,19 @@ export default function Home() {
           size="icon"
           onClick={() => setIsFavoritesOpen(true)}
           className="rounded-full w-12 h-12 shadow-lg transition-all backdrop-blur-md bg-black/5 hover:bg-black/10 border-black/10 text-slate-700 hover:text-slate-900 dark:bg-white/5 dark:hover:bg-white/10 dark:border-white/10 dark:text-white/70 dark:hover:text-white border"
-          title="Mis Favoritos"
+          title={t({ es: "Mis Favoritos", en: "My Favorites" })}
         >
           <Heart className="w-6 h-6" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsEmergencyOpen(true)}
+          className="rounded-full w-12 h-12 shadow-lg transition-all backdrop-blur-md bg-red-500/10 hover:bg-red-500/20 border-red-500/20 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border"
+          title={t({ es: "Números de Emergencia", en: "Emergency Numbers" })}
+        >
+          <Shield className="w-6 h-6" />
         </Button>
       </div>
 
@@ -60,7 +75,7 @@ export default function Home() {
             className="font-medium text-foreground/70 hover:text-foreground hover:bg-white/10 rounded-full px-6 h-12 transition-all animate-in fade-in slide-in-from-top-4 duration-700"
           >
             <LogIn className="w-4 h-4 mr-2" />
-            Iniciar Sesión
+            {t({ es: "Iniciar Sesión", en: "Sign In" })}
           </Button>
         )}
       </div>
@@ -94,7 +109,7 @@ export default function Home() {
             PlacaCheck
           </h1>
           <p className="text-muted-foreground text-lg max-w-[80%] mx-auto">
-            La plataforma definitiva para evaluar el comportamiento vehicular en México.
+            {t({ es: "La plataforma definitiva para evaluar el comportamiento vehicular en México.", en: "The ultimate platform to evaluate driver behavior in Mexico." })}
           </p>
         </div>
 
@@ -108,7 +123,7 @@ export default function Home() {
               <Search className="absolute left-4 h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 type="text"
-                placeholder="Ingresa la placa (ej: ABC-123)"
+                placeholder={t({ es: "Ingresa la placa (ej: ABC-123)", en: "Enter license plate (e.g. ABC-123)" })}
                 className="pl-12 h-16 text-xl bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/50 uppercase font-mono tracking-wider"
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value)}
@@ -123,7 +138,7 @@ export default function Home() {
             disabled={placa.length < 3}
             className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-xl transition-all active:scale-[0.98]"
           >
-            Buscar Placa
+            {t({ es: "Buscar Placa", en: "Search Plate" })}
           </Button>
         </form>
 
@@ -133,26 +148,26 @@ export default function Home() {
             <div className="p-3 bg-card border rounded-full group-hover:bg-primary/20 transition-colors shadow-sm">
               <MessageSquare className="w-5 h-5 text-primary" />
             </div>
-            <span className="text-xs font-medium">Comentarios<br />Anónimos</span>
+            <span className="text-xs font-medium" dangerouslySetInnerHTML={{ __html: t({ es: "Comentarios<br />Anónimos", en: "Anonymous<br />Reviews" }) }} />
           </div>
           <div className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors cursor-default group">
             <div className="p-3 bg-card border rounded-full group-hover:bg-accent/20 transition-colors shadow-sm">
               <Star className="w-5 h-5 text-yellow-500" />
             </div>
-            <span className="text-xs font-medium">Califica<br />Conductores</span>
+            <span className="text-xs font-medium" dangerouslySetInnerHTML={{ __html: t({ es: "Califica<br />Conductores", en: "Rate<br />Drivers" }) }} />
           </div>
           <div className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors cursor-default group">
             <div className="p-3 bg-card border rounded-full group-hover:bg-green-500/20 transition-colors shadow-sm">
               <Shield className="w-5 h-5 text-green-500" />
             </div>
-            <span className="text-xs font-medium">Comunidad<br />Segura</span>
+            <span className="text-xs font-medium" dangerouslySetInnerHTML={{ __html: t({ es: "Comunidad<br />Segura", en: "Safe<br />Community" }) }} />
           </div>
         </div>
       </div>
 
       {/* Footer */}
       <div className="absolute bottom-6 text-center text-xs text-muted-foreground/40">
-        © 2024 PlacaCheck México. v1.0
+        © 2024 Felipe Jhair. v1.0
       </div>
 
       <LoginModal
@@ -162,6 +177,10 @@ export default function Home() {
       <FavoritesSheet
         isOpen={isFavoritesOpen}
         onClose={() => setIsFavoritesOpen(false)}
+      />
+      <EmergencySheet
+        isOpen={isEmergencyOpen}
+        onClose={() => setIsEmergencyOpen(false)}
       />
     </main>
   );

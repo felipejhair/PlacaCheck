@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth-provider";
+import { useLanguage } from "@/components/language-provider";
 import { AvatarSelector, getAvatarIcon } from "@/components/avatar-selector";
 import { updateUserAvatar } from "@/actions/user-actions";
 import { cn } from "@/lib/utils";
 
 export function UserMenu() {
     const { user, logout, updateUser } = useAuth();
+    const { t } = useLanguage();
     const [isAvatarSelectorOpen, setIsAvatarSelectorOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -61,12 +63,12 @@ export function UserMenu() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => setIsAvatarSelectorOpen(true)} className="cursor-pointer">
                         <UserIcon className="mr-2 h-4 w-4" />
-                        <span>Cambiar Avatar</span>
+                        <span>{t({ es: "Cambiar Avatar", en: "Change Avatar" })}</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={logout} className="text-red-500 focus:text-red-500 cursor-pointer">
                         <LogOut className="mr-2 h-4 w-4" />
-                        <span>Cerrar Sesión</span>
+                        <span>{t({ es: "Cerrar Sesión", en: "Log Out" })}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

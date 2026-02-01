@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+import { useLanguage } from "@/components/language-provider";
+
 export function SettingsMenu() {
     const { theme, setTheme } = useTheme();
+    const { language, setLanguage } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -82,6 +85,34 @@ export function SettingsMenu() {
                                     >
                                         <Monitor className="w-5 h-5" />
                                         <span className="text-[10px] font-medium">Sistema</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3 pt-2 border-t">
+                                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                    Idioma / Language
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={() => setLanguage("es")}
+                                        className={cn(
+                                            "flex items-center justify-center gap-2 p-2 rounded-xl border transition-all hover:bg-secondary",
+                                            language === "es" ? "bg-secondary border-primary/50 text-primary font-bold" : "border-transparent text-muted-foreground"
+                                        )}
+                                    >
+                                        <span className="text-lg">🇲🇽</span>
+                                        <span className="text-xs">Español</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setLanguage("en")}
+                                        className={cn(
+                                            "flex items-center justify-center gap-2 p-2 rounded-xl border transition-all hover:bg-secondary",
+                                            language === "en" ? "bg-secondary border-primary/50 text-primary font-bold" : "border-transparent text-muted-foreground"
+                                        )}
+                                    >
+                                        <span className="text-lg">🇺🇸</span>
+                                        <span className="text-xs">English</span>
                                     </button>
                                 </div>
                             </div>

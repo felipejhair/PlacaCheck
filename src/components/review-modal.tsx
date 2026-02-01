@@ -6,6 +6,7 @@ import { X, Star, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth-provider";
+import { useLanguage } from "@/components/language-provider";
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -24,8 +25,21 @@ const AVAILABLE_TAGS = [
   "Cede el Paso"
 ];
 
+// Map specific tags to their translations
+const TAG_TRANSLATIONS: Record<string, { es: string; en: string }> = {
+  "Amable": { es: "Amable", en: "Kind" },
+  "Respeta Señales": { es: "Respeta Señales", en: "Respects Signals" },
+  "Usa Direccionales": { es: "Usa Direccionales", en: "Uses Turn Signals" },
+  "Imprudente": { es: "Imprudente", en: "Reckless" },
+  "Exceso Velocidad": { es: "Exceso Velocidad", en: "Speeding" },
+  "Agresivo": { es: "Agresivo", en: "Aggressive" },
+  "Uso de Celular": { es: "Uso de Celular", en: "Using Phone" },
+  "Cede el Paso": { es: "Cede el Paso", en: "Yields" }
+};
+
 export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [rating, setRating] = useState(0);
   const [text, setText] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -40,6 +54,12 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
         setSelectedTags([...selectedTags, tag]);
       }
     }
+  };
+
+  const getTranslatedTag = (tag: string) => {
+    const translation = TAG_TRANSLATIONS[tag];
+    if (!translation) return tag; // Fallback to original if not found
+    return t(translation);
   };
 
   const handleSubmit = () => {
@@ -82,7 +102,7 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
             <div className="w-full bg-card border-t sm:border shadow-2xl rounded-t-3xl sm:rounded-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto sm:w-[90%] sm:max-w-md pointer-events-auto">
               {/* Content Wrapper inside the positioning div */}
               <div className="flex justify-between items-center sticky top-0 bg-card z-10 pb-2">
-                <h2 className="text-xl font-bold">Calificar Placa</h2>
+                <h2 className="text-xl font-bold">{t({ es: "Calificar Placa", en: "Rate Plate" })}</h2>
                 <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-muted">
                   <X className="w-5 h-5" />
                 </Button>
@@ -112,13 +132,20 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
                     ))}
                   </div>
                   <span className="text-sm font-medium text-muted-foreground">
-                    {rating === 0 ? "Toca para calificar" : rating === 5 ? "¡Excelente!" : rating === 1 ? "Muy mal" : `${rating} Estrellas`}
+                    {rating === 0
+                      ? t({ es: "Toca para calificar", en: "Tap to rate" })
+                      : rating === 5
+                        ? t({ es: "¡Excelente!", en: "Excellent!" })
+                        : rating === 1
+                          ? t({ es: "Muy mal", en: "Very bad" })
+                          : `${rating} ${t({ es: "Estrellas", en: "Stars" })}`
+                    }
                   </span>
                 </div>
 
                 {/* Tags */}
                 <div className="space-y-3">
-                  <label className="text-sm font-semibold">Etiquetas (Max 3)</label>
+                  <label className="text-sm font-semibold">{t({ es: "Etiquetas (Max 3)", en: "Tags (Max 3)" })}</label>
                   <div className="flex flex-wrap gap-2">
                     {AVAILABLE_TAGS.map((tag) => (
                       <button
@@ -131,7 +158,7 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
                             : "bg-secondary/50 hover:bg-secondary border-transparent text-muted-foreground"
                         )}
                       >
-                        {tag}
+                        {getTranslatedTag(tag)}
                         {selectedTags.includes(tag) && <Check className="w-3 h-3" />}
                       </button>
                     ))}
@@ -140,10 +167,10 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
 
                 {/* Comment */}
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold">Tu opinión</label>
+                  <label className="text-sm font-semibold">{t({ es: "Tu opinión", en: "Your review" })}</label>
                   <textarea
                     className="flex w-full rounded-xl border border-input bg-secondary/30 px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px] resize-none"
-                    placeholder="Describe tu experiencia..."
+                    placeholder={t({ es: "Describe tu experiencia...", en: "Describe your experience..." })}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                   />
@@ -162,7 +189,7 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
                       {isAnonymous && <Check className="w-3.5 h-3.5" />}
                     </button>
                     <label onClick={() => setIsAnonymous(!isAnonymous)} className="text-sm cursor-pointer select-none text-muted-foreground hover:text-foreground transition-colors">
-                      Ocultar mi identidad
+                      {t({ es: "Ocultar mi identidad", en: "Hide my identity" })}
                     </label>
                   </div>
                 )}
@@ -173,7 +200,7 @@ export function ReviewModal({ isOpen, onClose, onSubmit }: ReviewModalProps) {
                   onClick={handleSubmit}
                   disabled={rating === 0 || text.trim().length === 0}
                 >
-                  Publicar Reseña
+                  {t({ es: "Publicar Reseña", en: "Post Review" })}
                 </Button>
               </div>
             </div>

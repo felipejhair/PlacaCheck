@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FavoritesProvider } from "@/components/favorites-context";
+import { LanguageProvider } from "@/components/language-provider";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -35,11 +36,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <FavoritesProvider>
-              {children}
-            </FavoritesProvider>
-          </AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <FavoritesProvider>
+                {children}
+              </FavoritesProvider>
+            </AuthProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

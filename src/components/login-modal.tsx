@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth, AuthProviderType } from "@/components/auth-provider";
 import { useState } from "react";
 import { registerUser, loginWithEmail, verifyEmail } from "@/actions/auth-actions";
+import { useLanguage } from "@/components/language-provider";
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -15,6 +16,7 @@ interface LoginModalProps {
 
 function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: () => void }) {
     const { setSession } = useAuth();
+    const { t } = useLanguage();
     const [mode, setMode] = useState<"login" | "register" | "verify">("login");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
@@ -94,14 +96,14 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
                     <Button variant="ghost" size="icon" type="button" onClick={() => setMode("register")} className="h-8 w-8 -ml-2">
                         <ArrowLeft className="w-4 h-4" />
                     </Button>
-                    <h3 className="font-semibold text-lg">Verificar Correo</h3>
+                    <h3 className="font-semibold text-lg">{t({ es: "Verificar Correo", en: "Verify Email" })}</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                    Hemos enviado un código a <strong>{formData.email}</strong>
+                    {t({ es: "Hemos enviado un código a", en: "We sent a code to" })} <strong>{formData.email}</strong>
                 </p>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Código de 6 dígitos</label>
+                    <label className="text-sm font-medium">{t({ es: "Código de 6 dígitos", en: "6-digit code" })}</label>
                     <Input
                         required
                         placeholder="123456"
@@ -115,7 +117,7 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
                 {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
                 <Button type="submit" className="w-full h-11" disabled={isLoading}>
-                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verificar"}
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : t({ es: "Verificar", en: "Verify" })}
                 </Button>
             </form>
         )
@@ -128,16 +130,16 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
                     <ArrowLeft className="w-4 h-4" />
                 </Button>
                 <h3 className="font-semibold text-lg">
-                    {mode === "login" ? "Iniciar con Correo" : "Crear cuenta"}
+                    {mode === "login" ? t({ es: "Iniciar con Correo", en: "Login with Email" }) : t({ es: "Crear cuenta", en: "Create Account" })}
                 </h3>
             </div>
 
             {mode === "register" && (
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Nombre</label>
+                    <label className="text-sm font-medium">{t({ es: "Nombre", en: "Name" })}</label>
                     <Input
                         required
-                        placeholder="Tu nombre"
+                        placeholder={t({ es: "Tu nombre", en: "Your name" })}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
@@ -145,7 +147,7 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
             )}
 
             <div className="space-y-2">
-                <label className="text-sm font-medium">Correo electrónico</label>
+                <label className="text-sm font-medium">{t({ es: "Correo electrónico", en: "Email" })}</label>
                 <Input
                     required
                     type="email"
@@ -156,7 +158,7 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium">Contraseña</label>
+                <label className="text-sm font-medium">{t({ es: "Contraseña", en: "Password" })}</label>
                 <Input
                     required
                     type="password"
@@ -169,22 +171,22 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
             {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
             <Button type="submit" className="w-full h-11" disabled={isLoading}>
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (mode === "login" ? "Entrar" : "Registrarse")}
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (mode === "login" ? t({ es: "Entrar", en: "Login" }) : t({ es: "Registrarse", en: "Sign Up" }))}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground pt-2">
                 {mode === "login" ? (
                     <>
-                        ¿No tienes cuenta?{" "}
+                        {t({ es: "¿No tienes cuenta?", en: "Don't have an account?" })}{" "}
                         <button type="button" onClick={() => setMode("register")} className="text-primary hover:underline font-medium">
-                            Regístrate
+                            {t({ es: "Regístrate", en: "Sign Up" })}
                         </button>
                     </>
                 ) : (
                     <>
-                        ¿Ya tienes cuenta?{" "}
+                        {t({ es: "¿Ya tienes cuenta?", en: "Already have an account?" })}{" "}
                         <button type="button" onClick={() => setMode("login")} className="text-primary hover:underline font-medium">
-                            Inicia Sesión
+                            {t({ es: "Inicia Sesión", en: "Login" })}
                         </button>
                     </>
                 )}
@@ -195,6 +197,7 @@ function EmailAuthForm({ onClose, onCancel }: { onClose: () => void, onCancel: (
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const { login } = useAuth();
+    const { t } = useLanguage();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [showEmailForm, setShowEmailForm] = useState(false);
 
@@ -232,7 +235,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     >
                         <div className="w-full bg-card border-t sm:border shadow-2xl rounded-t-3xl sm:rounded-2xl p-6 space-y-8 max-h-[90vh] overflow-y-auto sm:w-[90%] sm:max-w-md pointer-events-auto">
                             <div className="flex justify-between items-center bg-card z-10 pb-2">
-                                <h2 className="text-2xl font-bold">Iniciar Sesión</h2>
+                                <h2 className="text-2xl font-bold">{t({ es: "Iniciar Sesión", en: "Login" })}</h2>
                                 <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-muted">
                                     <X className="w-5 h-5" />
                                 </Button>
@@ -240,7 +243,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                             <div className="space-y-4">
                                 <p className="text-muted-foreground text-center pb-4">
-                                    Inicia sesión para que tus reportes tengan más peso y sean verificados por la comunidad.
+                                    {t({ es: "Inicia sesión para que tus reportes tengan más peso y sean verificados por la comunidad.", en: "Log in so your reports have more weight and are verified by the community." })}
                                 </p>
 
                                 {/* Email Auth Toggle */}
@@ -252,7 +255,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             onClick={() => setShowEmailForm(true)}
                                         >
                                             <Mail className="w-4 h-4 mr-2" />
-                                            Continuar con Correo
+                                            {t({ es: "Continuar con Correo", en: "Continue with Email" })}
                                         </Button>
                                     ) : (
                                         <EmailAuthForm onClose={onClose} onCancel={() => setShowEmailForm(false)} />
@@ -266,7 +269,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             className="w-full text-muted-foreground font-normal hover:text-foreground mt-4"
                                             onClick={onClose}
                                         >
-                                            Continuar como invitado
+                                            {t({ es: "Continuar como invitado", en: "Continue as guest" })}
                                         </Button>
                                     </>
                                 )}
