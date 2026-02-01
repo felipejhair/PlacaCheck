@@ -20,6 +20,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "PlacaCheck - Conductores al descubierto",
   description: "Consulta y califica el comportamiento vehicular por placa en México. Comunidad activa de reportes viales.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

@@ -38,7 +38,7 @@ export function FavoritesSheet({ isOpen, onClose }: FavoritesSheetProps) {
                         className="fixed top-0 right-0 h-full w-full max-w-sm bg-background border-l shadow-2xl z-[101] flex flex-col"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-4 border-b bg-card">
+                        <div className="flex items-center justify-between px-4 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] border-b bg-card">
                             <div className="flex items-center gap-2 text-primary font-bold text-lg">
                                 <Heart className="w-5 h-5 fill-primary" />
                                 <span>Mis Favoritos</span>

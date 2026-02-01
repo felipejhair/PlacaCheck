@@ -83,7 +83,7 @@ export function EmergencySheet({ isOpen, onClose }: EmergencySheetProps) {
                         className="fixed top-0 right-0 h-full w-full max-w-sm bg-background border-l shadow-2xl z-[101] flex flex-col"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-4 border-b bg-card">
+                        <div className="flex items-center justify-between px-4 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] border-b bg-card">
                             <div className="flex items-center gap-2 text-red-500 font-bold text-lg">
                                 <ShieldAlert className="w-5 h-5 fill-red-500/20" />
                                 <span>{t({ es: "Emergencias México", en: "Emergency Mexico" })}</span>

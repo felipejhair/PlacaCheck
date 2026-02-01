@@ -102,8 +102,34 @@ export default function Home() {
 
         {/* Header */}
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-5 duration-700">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/20 mb-6 rotate-3">
-            <Shield className="w-8 h-8 text-white" />
+          <div className="mx-auto mb-6 relative w-24 h-24 transition-transform hover:scale-105 duration-500 flex items-center justify-center">
+            {/* Glow Effect */}
+            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
+
+            {/* Vector Logo Construction */}
+            <div className="relative z-10 w-full h-full p-2">
+              {/* Main Shield */}
+              <Shield className="w-full h-full text-slate-200 dark:text-slate-900 fill-white dark:fill-slate-900/90 drop-shadow-2xl transition-colors duration-500" strokeWidth={1.5} />
+
+              {/* Inner Border/Highlight */}
+              <Shield className="absolute inset-0 w-full h-full p-2 text-slate-300/50 dark:text-slate-700/50 transition-colors duration-500" strokeWidth={1} />
+
+              {/* Checkmark */}
+              <div className="absolute inset-0 flex items-center justify-center pt-2 pl-0.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-10 h-10 text-primary drop-shadow-md"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+            </div>
           </div>
           <h1 className="text-5xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-white dark:to-white/60">
             PlacaCheck
@@ -167,7 +193,7 @@ export default function Home() {
 
       {/* Footer */}
       <div className="absolute bottom-6 text-center text-xs text-muted-foreground/40">
-        © 2024 Felipe Jhair. v1.0
+        © 2026 Felipe Jhair. v1.0
       </div>
 
       <LoginModal
