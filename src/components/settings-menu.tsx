@@ -10,12 +10,57 @@ import Link from "next/link";
 
 import { useLanguage } from "@/components/language-provider";
 import { SupportDialog } from "@/components/support-dialog";
+import { useAuth } from "@/components/auth-provider";
+import { deleteAccount } from "@/app/actions/user";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2, Trash2 } from "lucide-react";
 
 export function SettingsMenu() {
     const { theme, setTheme } = useTheme();
     const { language, setLanguage, t } = useLanguage();
+    const { user, logout } = useAuth();
+    const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
     const [isSupportOpen, setIsSupportOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteAccount = async () => {
+        if (!user || !user.id) return;
+
+        setIsDeleting(true);
+        try {
+            const result = await deleteAccount(user.id);
+            if (result.success) {
+                logout();
+                setIsOpen(false);
+                toast({
+                    title: t({ es: "Cuenta eliminada", en: "Account deleted" }),
+                    description: t({ es: "Tu cuenta y datos han sido borrados permanentemente.", en: "Your account and data have been permanently deleted." }),
+                });
+            } else {
+                throw new Error("Failed");
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: t({ es: "No se pudo eliminar la cuenta.", en: "Could not delete account." }),
+                variant: "destructive",
+            });
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     return (
         <div className="relative z-50">
@@ -140,6 +185,37 @@ export function SettingsMenu() {
                                     <MessageSquarePlus className="h-4 w-4 text-muted-foreground" />
                                     <span className="text-sm font-medium text-foreground/80">{t({ es: "Soporte y Sugerencias", en: "Support & Feedback" })}</span>
                                 </Button>
+
+                                {user && (
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className="w-full justify-start h-10 px-3 gap-2 bg-transparent border-dashed border-red-200 hover:bg-red-50 dark:hover:bg-red-950/20 text-red-600 dark:text-red-400"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                                <span className="text-sm font-medium">{t({ es: "Eliminar Cuenta", en: "Delete Account" })}</span>
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>{t({ es: "¿Estás seguro?", en: "Are you sure?" })}</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    {t({
+                                                        es: "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y removerá tus datos de nuestros servidores.",
+                                                        en: "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+                                                    })}
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>{t({ es: "Cancelar", en: "Cancel" })}</AlertDialogCancel>
+                                                <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700 text-white">
+                                                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : t({ es: "Sí, eliminar cuenta", en: "Yes, delete account" })}
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                )}
                             </div>
                         </motion.div>
                     </>
