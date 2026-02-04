@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginUser } from "@/actions/auth-actions";
+import { loginUser, getUser } from "@/actions/auth-actions"; // Import getUser
 
 export type AuthProviderType = "google" | "facebook" | "guest" | "email";
 
@@ -28,18 +28,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Load session from localStorage on mount
+    // Load session from localStorage on mount AND validate with server
     useEffect(() => {
-        const savedUser = localStorage.getItem("placa-check-user");
-        if (savedUser) {
-            try {
-                setUser(JSON.parse(savedUser));
-            } catch (e) {
-                console.error("Failed to parse user session", e);
-                localStorage.removeItem("placa-check-user");
+        const initSession = async () => {
+            const savedUser = localStorage.getItem("placa-check-user");
+            if (savedUser) {
+                try {
+                    const parsedUser = JSON.parse(savedUser);
+                    setUser(parsedUser); // Optimistic set
+
+                    // Validate with server if we have an email
+                    if (parsedUser.email) {
+                        try {
+                            const dbUser = await getUser(parsedUser.email);
+                            if (!dbUser) {
+                                // User deleted or invalid
+                                console.warn("Session invalid: User not found on server");
+                                setUser(null);
+                                localStorage.removeItem("placa-check-user");
+                            } else {
+                                // Optional: Update local user with fresh DB data
+                                const freshUser: User = {
+                                    id: dbUser.id,
+                                    name: dbUser.name,
+                                    email: dbUser.email || parsedUser.email,
+                                    avatar: dbUser.avatar || undefined,
+                                    provider: dbUser.provider as AuthProviderType,
+                                };
+                                setUser(freshUser);
+                                localStorage.setItem("placa-check-user", JSON.stringify(freshUser));
+                            }
+                        } catch (err) {
+                            console.error("Error validating session:", err);
+                            // Don't logout on network error, just keep optimistic
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to parse user session", e);
+                    localStorage.removeItem("placa-check-user");
+                }
             }
-        }
-        setIsLoading(false);
+            setIsLoading(false);
+        };
+
+        initSession();
     }, []);
 
     const login = async (provider: AuthProviderType) => {

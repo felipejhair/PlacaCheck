@@ -38,8 +38,8 @@ export default function SupportPage() {
                         </p>
                         <div className="flex flex-col gap-2">
                             <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t({ es: "Correo Electrónico", en: "Email" })}</span>
-                            <a href="mailto:soporte@placacheck.com" className="text-lg font-bold text-primary hover:underline">
-                                soporte@placacheck.com
+                            <a href="mailto:soporte@believer4ever.com" className="text-lg font-bold text-primary hover:underline">
+                                soporte@believer4ever.com
                             </a>
                         </div>
                     </section>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Settings, Moon, Sun, Monitor, X, Shield, MessageSquarePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -26,6 +27,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Trash2 } from "lucide-react";
 
+
+
 export function SettingsMenu() {
     const { theme, setTheme } = useTheme();
     const { language, setLanguage, t } = useLanguage();
@@ -34,13 +37,24 @@ export function SettingsMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSupportOpen, setIsSupportOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [password, setPassword] = useState("");
 
-    const handleDeleteAccount = async () => {
+    const handleDeleteAccount = async (e: React.MouseEvent) => {
+        e.preventDefault(); // Prevent auto close
         if (!user || !user.id) return;
+
+        if (user.provider === "email" && !password) {
+            toast({
+                title: t({ es: "Contraseña requerida", en: "Password required" }),
+                description: t({ es: "Por favor ingresa tu contraseña para confirmar.", en: "Please enter your password to confirm." }),
+                variant: "destructive",
+            });
+            return;
+        }
 
         setIsDeleting(true);
         try {
-            const result = await deleteAccount(user.id);
+            const result = await deleteAccount(user.id, password);
             if (result.success) {
                 logout();
                 setIsOpen(false);
@@ -49,7 +63,11 @@ export function SettingsMenu() {
                     description: t({ es: "Tu cuenta y datos han sido borrados permanentemente.", en: "Your account and data have been permanently deleted." }),
                 });
             } else {
-                throw new Error("Failed");
+                toast({
+                    title: "Error",
+                    description: result.error || "Failed",
+                    variant: "destructive",
+                });
             }
         } catch (error) {
             toast({
@@ -206,6 +224,20 @@ export function SettingsMenu() {
                                                         en: "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
                                                     })}
                                                 </AlertDialogDescription>
+                                                {user.provider === "email" && (
+                                                    <div className="mt-4 space-y-2">
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase">
+                                                            {t({ es: "Confirma tu contraseña", en: "Confirm your password" })}
+                                                        </label>
+                                                        <Input
+                                                            type="password"
+                                                            value={password}
+                                                            onChange={(e) => setPassword(e.target.value)}
+                                                            placeholder="******"
+                                                            className="bg-background"
+                                                        />
+                                                    </div>
+                                                )}
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>{t({ es: "Cancelar", en: "Cancel" })}</AlertDialogCancel>
