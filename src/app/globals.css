@@ -31,6 +31,9 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 263 70% 50%;
 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
@@ -65,6 +68,9 @@
     --border: 216 34% 17%;
     --input: 216 34% 17%;
     --ring: 263 70% 50%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
     /* Custom Gradient for Dark Mode */
     --gradient-start: 224 71% 4%;
