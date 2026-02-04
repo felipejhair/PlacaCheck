@@ -12,6 +12,7 @@ import { SettingsMenu } from "@/components/settings-menu";
 import { FavoritesSheet } from "@/components/favorites-sheet";
 import { EmergencySheet } from "@/components/emergency-sheet";
 import { useLanguage } from "@/components/language-provider";
+import { StoreBadges } from "@/components/store-badges";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -189,6 +190,11 @@ export default function Home() {
             <span className="text-xs font-medium" dangerouslySetInnerHTML={{ __html: t({ es: "Comunidad<br />Segura", en: "Safe<br />Community" }) }} />
           </div>
         </div>
+      </div>
+
+      {/* Store Badges (Desktop Only) */}
+      <div className="mt-8 z-20">
+        <StoreBadges />
       </div>
 
       {/* Footer */}
