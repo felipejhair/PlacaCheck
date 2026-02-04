@@ -135,19 +135,19 @@ export default function PlacePage({ params }: { params: { placa: string } }) {
                     "fixed top-0 z-50 w-full p-4 pt-safe transition-all duration-700 ease-in-out",
                     showStickyTitle ? "bg-gradient-to-b from-background/90 via-background/70 to-transparent backdrop-blur-xl pb-12" : "pointer-events-none"
                 )}>
-                <div className="container mx-auto max-w-lg flex items-center justify-between pointer-events-auto mt-2">
+                <div className="container mx-auto max-w-lg flex items-center justify-between pointer-events-auto mt-2 relative z-50">
                     <Link href="/">
-                        <Button variant="ghost" size="icon" className="rounded-full bg-background/50 backdrop-blur-md shadow-sm border border-border/50 hover:bg-background/80">
+                        <Button variant="ghost" size="icon" className="rounded-full bg-background/50 backdrop-blur-md shadow-sm border border-border/50 hover:bg-background/80 relative z-50">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     </Link>
 
                     {/* Header Title (Sticky) */}
                     <div className={cn(
-                        "absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-in-out transform pointer-events-none z-0",
+                        "absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-in-out transform pointer-events-none z-40",
                         showStickyTitle ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
                     )}>
-                        <div className="bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full border shadow-sm flex items-center gap-2">
+                        <div className="bg-background/95 backdrop-blur-xl px-4 py-1.5 rounded-full border shadow-lg flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                             <span className="font-bold font-mono tracking-widest text-xs truncate max-w-[120px]">{placa}</span>
                         </div>
