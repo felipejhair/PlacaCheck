@@ -9,6 +9,10 @@ const config: Config = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                script: ["var(--font-script)", "cursive"],
+                "serif-elegant": ["var(--font-serif-elegant)", "serif"],
+            },
             colors: {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",

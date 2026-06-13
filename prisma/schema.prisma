@@ -69,3 +69,16 @@ model Favorite {
   @@index([userId])
   @@index([plateId])
 }
+
+// Confirmaciones de asistencia (RSVP) para las invitaciones de XV años en /xv/[nombre]
+model XvRsvp {
+  id           Int      @id @default(autoincrement())
+  slug         String   // Identifica a qué invitación pertenece (ej: "sofia")
+  nombre       String   // Nombre del invitado que confirma
+  asistira     Boolean  // true = sí asiste, false = no podrá asistir
+  acompanantes Int      @default(0) // Número de acompañantes adicionales
+  mensaje      String?  @db.Text // Mensaje opcional para la festejada
+  createdAt    DateTime @default(now())
+
+  @@index([slug])
+}

@@ -108,3 +108,113 @@
     top: env(safe-area-inset-top);
   }
 }
+
+/* =========================================================================
+   Efectos de la invitación de XV años (/xv/[nombre])
+   ========================================================================= */
+
+/* --- Fondo aurora animado --- */
+.xv-aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.xv-aurora-1 {
+  width: 42vw;
+  height: 42vw;
+  top: -8%;
+  left: -10%;
+  background: radial-gradient(circle at center, #fda4af, transparent 70%);
+  animation: xvDrift1 18s ease-in-out infinite;
+}
+.xv-aurora-2 {
+  width: 38vw;
+  height: 38vw;
+  bottom: -10%;
+  right: -8%;
+  background: radial-gradient(circle at center, #fcd34d, transparent 70%);
+  animation: xvDrift2 22s ease-in-out infinite;
+}
+.xv-aurora-3 {
+  width: 34vw;
+  height: 34vw;
+  top: 40%;
+  left: 50%;
+  background: radial-gradient(circle at center, #f9a8d4, transparent 70%);
+  animation: xvDrift3 26s ease-in-out infinite;
+}
+@keyframes xvDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(8vw, 6vh) scale(1.15); }
+}
+@keyframes xvDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-7vw, -5vh) scale(1.2); }
+}
+@keyframes xvDrift3 {
+  0%, 100% { transform: translate(-50%, 0) scale(1); }
+  50% { transform: translate(-40%, -8vh) scale(1.1); }
+}
+
+/* --- Pétalos / destellos cayendo --- */
+.xv-petal {
+  will-change: transform;
+  animation-name: xvFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes xvFall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% {
+    transform: translateY(110vh) translateX(var(--drift, 0px)) rotate(var(--spin, 360deg));
+    opacity: 0;
+  }
+}
+
+/* --- Texto con brillo dorado (gold foil) --- */
+.xv-shimmer {
+  background: linear-gradient(
+    100deg,
+    #b76e2d 0%,
+    #e8b96a 25%,
+    #fff4d6 45%,
+    #e8b96a 60%,
+    #b76e2d 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: xvShimmer 5s linear infinite;
+}
+@keyframes xvShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-aurora, .xv-petal, .xv-shimmer {
+    animation: none !important;
+  }
+}
+
+/* --- Scroll por secciones (snap) --- */
+.xv-snap {
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  -webkit-overflow-scrolling: touch;
+}
+.xv-snap::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.xv-snap-section {
+  scroll-snap-align: start;
+}
