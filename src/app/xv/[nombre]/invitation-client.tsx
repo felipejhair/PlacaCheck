@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   CalendarHeart,
   ChevronLeft,
@@ -354,39 +354,6 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
   const heroY = useTransform(heroProgress, [0, 1], [0, 160]);
   const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
 
-  // --- Parallax giroscópico (móvil) ---
-  const gyroX = useMotionValue(0);
-  const gyroY = useMotionValue(0);
-  const smoothGyroX = useSpring(gyroX, { stiffness: 60, damping: 25 });
-  const smoothGyroY = useSpring(gyroY, { stiffness: 60, damping: 25 });
-  const gyroSetupRef = useRef<() => void>(() => {});
-
-  useEffect(() => {
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      gyroX.set(Math.max(-1, Math.min(1, (e.gamma ?? 0) / 25)) * 14);
-      gyroY.set(Math.max(-1, Math.min(1, ((e.beta ?? 50) - 50) / 25)) * 10);
-    };
-    gyroSetupRef.current = () => {
-      if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
-        (DeviceOrientationEvent as any)
-          .requestPermission()
-          .then((s: string) => {
-            if (s === "granted") window.addEventListener("deviceorientation", handleOrientation);
-          })
-          .catch(() => {});
-      } else {
-        window.addEventListener("deviceorientation", handleOrientation);
-      }
-    };
-    // Android / browsers sin permiso requerido: iniciar directo
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof (DeviceOrientationEvent as any).requestPermission !== "function"
-    ) {
-      window.addEventListener("deviceorientation", handleOrientation);
-    }
-    return () => window.removeEventListener("deviceorientation", handleOrientation);
-  }, []);
 
   // --- Navegación por secciones (solo móvil: swipe tipo TikTok) ---
   const currentSectionRef = useRef(0);
@@ -456,7 +423,6 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
     if (!audio) return;
     audio.volume = 0.6;
     audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-    gyroSetupRef.current(); // solicita permiso de orientación en iOS 13+
   };
 
   const toggleMusic = () => {
@@ -594,11 +560,11 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
         {invitacion.heroImg && (
           <div className="absolute inset-0 overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <motion.img
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={invitacion.heroImg}
               alt={invitacion.nombre}
-              style={{ x: smoothGyroX, y: smoothGyroY }}
-              className="h-[112%] w-[112%] -translate-x-[5%] -translate-y-[5%] object-cover"
+              className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-rose-50/70 via-rose-50/80 to-amber-50/92" />
           </div>
