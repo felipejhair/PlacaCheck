@@ -8,6 +8,8 @@ import {
   Clock,
   Gift,
   Heart,
+  Home,
+  Mail,
   MapPin,
   Music,
   PartyPopper,
@@ -100,29 +102,29 @@ function LugarCard({
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -6 }}
-      className="group rounded-2xl border border-rose-100 bg-white/60 p-6 text-center shadow-sm backdrop-blur-md transition-shadow hover:shadow-xl hover:shadow-rose-100"
+      className="group rounded-2xl border border-rose-100 bg-white/60 p-3 text-center shadow-sm backdrop-blur-md transition-shadow hover:shadow-xl hover:shadow-rose-100 sm:p-6"
     >
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition-transform group-hover:scale-110">
+      <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition-transform group-hover:scale-110 sm:mb-3 sm:h-12 sm:w-12">
         {icon}
       </div>
-      <h3 className="font-serif-elegant text-xl font-semibold text-stone-700">
+      <h3 className="font-serif-elegant text-base font-semibold text-stone-700 sm:text-xl">
         {lugar.titulo}
       </h3>
-      <p className="mt-2 font-serif-elegant text-lg text-stone-600">{lugar.lugar}</p>
+      <p className="mt-1 font-serif-elegant text-sm text-stone-600 sm:mt-2 sm:text-lg">{lugar.lugar}</p>
       {lugar.direccion && (
-        <p className="mt-1 text-sm text-stone-500">{lugar.direccion}</p>
+        <p className="mt-1 text-xs text-stone-500 sm:text-sm">{lugar.direccion}</p>
       )}
-      <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-medium text-rose-500">
-        <Clock className="h-4 w-4" /> {lugar.hora}
+      <p className="mt-2 flex items-center justify-center gap-1 text-xs font-medium text-rose-500 sm:gap-1.5 sm:text-sm">
+        <Clock className="h-3 w-3 sm:h-4 sm:w-4" /> {lugar.hora}
       </p>
       {lugar.mapsUrl && (
         <a
           href={lugar.mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 transition hover:bg-rose-500 hover:text-white"
+          className="mt-3 inline-flex items-center gap-1 rounded-full border border-rose-200 px-2 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-500 hover:text-white sm:mt-4 sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm"
         >
-          <MapPin className="h-4 w-4" /> Cómo llegar
+          <MapPin className="h-3 w-3 sm:h-4 sm:w-4" /> Cómo llegar
         </a>
       )}
     </motion.div>
@@ -286,12 +288,14 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
   const currentSectionRef = useRef(0);
   const navLocked = useRef(false);
   const navTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [currentSection, setCurrentSection] = useState(0);
 
   const goTo = useCallback((idx: number) => {
     if (navLocked.current) return;
     const sections = Array.from(document.querySelectorAll<HTMLElement>(".xv-snap-section"));
     const next = Math.max(0, Math.min(sections.length - 1, idx));
     currentSectionRef.current = next;
+    setCurrentSection(next);
     navLocked.current = true;
     sections[next].scrollIntoView({ behavior: "smooth", block: "start" });
     if (navTimer.current) clearTimeout(navTimer.current);
@@ -303,9 +307,18 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
   // Swipe táctil para móvil — desktop usa scroll nativo sin intervención
   useEffect(() => {
     let touchStartY = 0;
-    const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    const onTouchStart = (e: TouchEvent) => {
+      // No capturar inicio si hay animación en curso (evita delta basura)
+      if (!navLocked.current) touchStartY = e.touches[0].clientY;
+    };
     const onTouchMove = (e: TouchEvent) => { e.preventDefault(); };
     const onTouchEnd = (e: TouchEvent) => {
+      if (navLocked.current) {
+        // El toque interrumpió la animación — re-snap instantáneo al destino
+        const sections = Array.from(document.querySelectorAll<HTMLElement>(".xv-snap-section"));
+        sections[currentSectionRef.current]?.scrollIntoView({ behavior: "instant", block: "start" });
+        return;
+      }
       const delta = touchStartY - e.changedTouches[0].clientY;
       if (Math.abs(delta) < 30) return;
       goTo(currentSectionRef.current + (delta > 0 ? 1 : -1));
@@ -413,6 +426,23 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
           </button>
         </>
       )}
+
+      {/* Botón volver al inicio — visible en móvil cuando no estás en la sección 1 */}
+      <AnimatePresence>
+        {currentSection > 0 && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => goTo(0)}
+            aria-label="Volver al inicio"
+            className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-rose-200 bg-white/90 text-rose-500 shadow-lg shadow-rose-100/60 backdrop-blur-sm transition hover:scale-105 hover:bg-rose-50 md:hidden"
+          >
+            <Home className="h-6 w-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* ---------------- HERO ---------------- */}
       <section
@@ -602,36 +632,36 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
       {/* ---------------- DETALLES DEL EVENTO ---------------- */}
       <motion.section
         {...reveal}
-        className="xv-snap-section flex min-h-[100dvh] flex-col justify-center px-6 py-16"
+        className="xv-snap-section flex min-h-[100dvh] flex-col justify-center px-4 py-8 sm:px-6 sm:py-16"
       >
-        <h2 className="mb-2 flex items-center justify-center gap-2 text-center font-serif-elegant text-3xl text-stone-700">
-          <CalendarHeart className="h-7 w-7 text-rose-400" /> Detalles del evento
+        <h2 className="mb-2 flex items-center justify-center gap-2 text-center font-serif-elegant text-2xl text-stone-700 sm:text-3xl">
+          <CalendarHeart className="h-6 w-6 text-rose-400 sm:h-7 sm:w-7" /> Detalles del evento
         </h2>
         <Divider />
-        <div className="mx-auto mt-6 grid max-w-3xl gap-6 sm:grid-cols-2">
+        <div className="mx-auto mt-4 grid w-full max-w-3xl grid-cols-2 gap-3 sm:mt-6 sm:gap-6">
           {invitacion.ceremonia && (
             <LugarCard
               lugar={invitacion.ceremonia}
-              icon={<Church className="h-6 w-6" />}
+              icon={<Church className="h-5 w-5 sm:h-6 sm:w-6" />}
             />
           )}
           <LugarCard
             lugar={invitacion.recepcion}
-            icon={<PartyPopper className="h-6 w-6" />}
+            icon={<PartyPopper className="h-5 w-5 sm:h-6 sm:w-6" />}
             delay={invitacion.ceremonia ? 0.15 : 0}
           />
         </div>
 
         {(invitacion.dressCode || invitacion.regalo?.length) && (
-          <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="mx-auto mt-4 grid w-full grid-cols-2 gap-2 sm:mt-8 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
             {invitacion.dressCode && (
-              <div className="flex items-center gap-3 rounded-2xl border border-amber-100 bg-amber-50/60 px-6 py-4 text-center backdrop-blur">
-                <Shirt className="h-5 w-5 shrink-0 text-amber-500" />
+              <div className="col-span-2 flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-3 backdrop-blur sm:col-span-1 sm:gap-3 sm:rounded-2xl sm:px-6 sm:py-4">
+                <Shirt className="h-4 w-4 shrink-0 text-amber-500 sm:h-5 sm:w-5" />
                 <div>
                   <p className="text-xs uppercase tracking-widest text-amber-500">
                     Código de vestimenta
                   </p>
-                  <p className="font-serif-elegant text-lg text-stone-700">
+                  <p className="font-serif-elegant text-base text-stone-700 sm:text-lg">
                     {invitacion.dressCode}
                   </p>
                 </div>
@@ -640,10 +670,14 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
             {invitacion.regalo?.map((r) => (
               <div
                 key={r}
-                className="flex items-center gap-3 rounded-2xl border border-rose-100 bg-rose-50/60 px-6 py-4 text-center backdrop-blur"
+                className="flex items-center gap-2 rounded-xl border border-rose-100 bg-rose-50/60 px-4 py-3 backdrop-blur sm:gap-3 sm:rounded-2xl sm:px-6 sm:py-4"
               >
-                <Gift className="h-5 w-5 shrink-0 text-rose-400" />
-                <p className="font-serif-elegant text-lg text-stone-700">{r}</p>
+                {r.toLowerCase().includes("sobre") ? (
+                  <Mail className="h-4 w-4 shrink-0 text-rose-400 sm:h-5 sm:w-5" />
+                ) : (
+                  <Gift className="h-4 w-4 shrink-0 text-rose-400 sm:h-5 sm:w-5" />
+                )}
+                <p className="font-serif-elegant text-base text-stone-700 sm:text-lg">{r}</p>
               </div>
             ))}
           </div>
