@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   CalendarHeart,
+  ChevronLeft,
+  ChevronRight,
   Church,
   Clock,
   Gift,
@@ -21,6 +23,7 @@ import {
 import type { XvInvitacion, XvInvitado, Lugar } from "../invitaciones";
 import {
   AuroraBackground,
+  Confetti,
   FallingPetals,
   OpeningOverlay,
   RollingNumber,
@@ -182,37 +185,109 @@ function Interlude({
 const POLAROID_ROTATIONS = [-4, 3, -2, 5, -3, 4, -1];
 
 function PolaroidGallery({ fotos, nombre }: { fotos: string[]; nombre: string }) {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const swipeStartX = useRef(0);
   const items = fotos.length > 0 ? fotos : Array.from({ length: 4 }, () => "");
+  const total = fotos.length;
+
+  const closeLightbox = () => setSelectedIdx(null);
+  const goPrev = () => setSelectedIdx((i) => i !== null ? (i - 1 + total) % total : null);
+  const goNext = () => setSelectedIdx((i) => i !== null ? (i + 1) % total : null);
+
+  // Bloquear scroll de fondo cuando el lightbox está abierto
+  useEffect(() => {
+    document.body.style.overflow = selectedIdx !== null ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [selectedIdx]);
+
+  // Teclado: Escape cierra, ← → navegan
+  useEffect(() => {
+    if (selectedIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") goPrev();
+      else if (e.key === "ArrowRight") goNext();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selectedIdx]);
 
   return (
     <>
       {/* Lightbox */}
       <AnimatePresence>
-        {selected && (
+        {selectedIdx !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelected(null)}
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 px-4"
+            onClick={closeLightbox}
+            onTouchStart={(e) => { swipeStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              const delta = swipeStartX.current - e.changedTouches[0].clientX;
+              if (Math.abs(delta) < 40) return;
+              delta > 0 ? goNext() : goPrev();
+            }}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 px-14"
           >
-            <motion.img
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.7, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 280, damping: 28 }}
-              src={selected}
-              alt={nombre}
-              onClick={(e) => e.stopPropagation()}
-              className="max-h-[88vh] max-w-full rounded-sm object-contain shadow-2xl"
-            />
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.img
+                key={selectedIdx}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.18 }}
+                src={fotos[selectedIdx]}
+                alt={`${nombre} ${selectedIdx + 1}`}
+                onClick={(e) => e.stopPropagation()}
+                className="max-h-[82vh] max-w-full rounded-sm object-contain shadow-2xl"
+              />
+            </AnimatePresence>
+
+            {/* Cerrar */}
             <button
-              onClick={() => setSelected(null)}
+              onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
               className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/25"
             >
               <X className="h-5 w-5" />
             </button>
+
+            {/* Anterior */}
+            {total > 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/25"
+                aria-label="Foto anterior"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+            )}
+
+            {/* Siguiente */}
+            {total > 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/25"
+                aria-label="Foto siguiente"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            )}
+
+            {/* Indicador de posición */}
+            {total > 1 && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                {fotos.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => { e.stopPropagation(); setSelectedIdx(i); }}
+                    className={`h-1.5 rounded-full transition-all duration-200 ${
+                      i === selectedIdx ? "w-5 bg-white" : "w-1.5 bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -227,7 +302,7 @@ function PolaroidGallery({ fotos, nombre }: { fotos: string[]; nombre: string })
             return (
               <motion.button
                 key={src || i}
-                onClick={() => src && setSelected(src)}
+                onClick={() => src && setSelectedIdx(i)}
                 initial={{ opacity: 0, y: 80, rotate: rotate * 2 }}
                 whileInView={{ opacity: 1, y: 0, rotate: rotate }}
                 whileHover={{ scale: 1.12, rotate: 0, y: -10, zIndex: 20 }}
@@ -239,17 +314,12 @@ function PolaroidGallery({ fotos, nombre }: { fotos: string[]; nombre: string })
                 }`}
               >
                 {src ? (
-                  <img
-                    src={src}
-                    alt={`${nombre} ${i + 1}`}
-                    className="aspect-square w-full object-cover"
-                  />
+                  <img src={src} alt={`${nombre} ${i + 1}`} className="aspect-square w-full object-cover" />
                 ) : (
                   <div className="flex aspect-square w-full items-center justify-center bg-rose-50">
                     <Sparkles className="h-8 w-8 text-rose-200" />
                   </div>
                 )}
-                {/* Brillo tipo polaroid */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent" />
               </motion.button>
             );
@@ -284,11 +354,50 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
   const heroY = useTransform(heroProgress, [0, 1], [0, 160]);
   const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
 
+  // --- Parallax giroscópico (móvil) ---
+  const gyroX = useMotionValue(0);
+  const gyroY = useMotionValue(0);
+  const smoothGyroX = useSpring(gyroX, { stiffness: 60, damping: 25 });
+  const smoothGyroY = useSpring(gyroY, { stiffness: 60, damping: 25 });
+  const gyroSetupRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      gyroX.set(Math.max(-1, Math.min(1, (e.gamma ?? 0) / 25)) * 14);
+      gyroY.set(Math.max(-1, Math.min(1, ((e.beta ?? 50) - 50) / 25)) * 10);
+    };
+    gyroSetupRef.current = () => {
+      if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
+        (DeviceOrientationEvent as any)
+          .requestPermission()
+          .then((s: string) => {
+            if (s === "granted") window.addEventListener("deviceorientation", handleOrientation);
+          })
+          .catch(() => {});
+      } else {
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+    };
+    // Android / browsers sin permiso requerido: iniciar directo
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof (DeviceOrientationEvent as any).requestPermission !== "function"
+    ) {
+      window.addEventListener("deviceorientation", handleOrientation);
+    }
+    return () => window.removeEventListener("deviceorientation", handleOrientation);
+  }, []);
+
   // --- Navegación por secciones (solo móvil: swipe tipo TikTok) ---
   const currentSectionRef = useRef(0);
   const navLocked = useRef(false);
   const navTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
+  const [totalSections, setTotalSections] = useState(0);
+
+  useEffect(() => {
+    setTotalSections(document.querySelectorAll(".xv-snap-section").length);
+  }, []);
 
   const goTo = useCallback((idx: number) => {
     if (navLocked.current) return;
@@ -308,11 +417,15 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
   useEffect(() => {
     let touchStartY = 0;
     const onTouchStart = (e: TouchEvent) => {
-      // No capturar inicio si hay animación en curso (evita delta basura)
-      if (!navLocked.current) touchStartY = e.touches[0].clientY;
+      // Ignorar si hay animación en curso o si hay un modal/lightbox abierto
+      if (!navLocked.current && document.body.style.overflow !== "hidden") {
+        touchStartY = e.touches[0].clientY;
+      }
     };
     const onTouchMove = (e: TouchEvent) => { e.preventDefault(); };
     const onTouchEnd = (e: TouchEvent) => {
+      // Si hay un modal/lightbox abierto, no navegar secciones
+      if (document.body.style.overflow === "hidden") return;
       if (navLocked.current) {
         // El toque interrumpió la animación — re-snap instantáneo al destino
         const sections = Array.from(document.querySelectorAll<HTMLElement>(".xv-snap-section"));
@@ -343,6 +456,7 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
     if (!audio) return;
     audio.volume = 0.6;
     audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+    gyroSetupRef.current(); // solicita permiso de orientación en iOS 13+
   };
 
   const toggleMusic = () => {
@@ -369,17 +483,26 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
+  // --- Confeti al confirmar RSVP ---
+  const [showConfetti, setShowConfetti] = useState(false);
+  const triggerConfetti = () => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3500);
+  };
+
   // --- RSVP por WhatsApp ---
+  const isGeneric = !!invitado?.isGeneric;
   const maxPersonas = invitado ? invitado.limite : 10;
   const [personas, setPersonas] = useState(1);
+  const [guestName, setGuestName] = useState("");
 
   const whatsappUrl = useMemo(() => {
     const word = personas === 1 ? "invitado" : "invitados";
-    const nombre = invitado?.nombre ?? "Invitado";
+    const nombre = isGeneric ? guestName.trim() : (invitado?.nombre ?? "Invitado");
     const message = `${nombre} confirma asistencia al XV de Arianne con ${personas} ${word}.`;
     const number = invitacion.whatsappNumero ?? "528182602964";
     return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
-  }, [personas, invitado?.nombre, invitacion.whatsappNumero]);
+  }, [personas, invitado?.nombre, invitacion.whatsappNumero, isGeneric, guestName]);
 
   const countdownItems = [
     { label: "Días", value: c.dias },
@@ -395,6 +518,7 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
     >
       <AuroraBackground />
       <FallingPetals count={22} />
+      <Confetti active={showConfetti} />
 
       {/* Sobre de apertura */}
       <OpeningOverlay
@@ -444,18 +568,37 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
         )}
       </AnimatePresence>
 
+      {/* Puntos indicadores de sección — solo móvil */}
+      {totalSections > 0 && (
+        <div className="fixed right-3 top-1/2 z-50 -translate-y-1/2 flex flex-col gap-1.5 md:hidden">
+          {Array.from({ length: totalSections }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Sección ${i + 1}`}
+              className={`rounded-full transition-all duration-300 ${
+                i === currentSection
+                  ? "h-4 w-1.5 bg-rose-500 shadow-sm shadow-rose-300"
+                  : "h-1.5 w-1.5 bg-rose-300/50"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
       {/* ---------------- HERO ---------------- */}
       <section
         ref={heroRef}
         className="xv-snap-section relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 text-center"
       >
         {invitacion.heroImg && (
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <motion.img
               src={invitacion.heroImg}
               alt={invitacion.nombre}
-              className="h-full w-full object-cover"
+              style={{ x: smoothGyroX, y: smoothGyroY }}
+              className="h-[112%] w-[112%] -translate-x-[5%] -translate-y-[5%] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-rose-50/70 via-rose-50/80 to-amber-50/92" />
           </div>
@@ -495,7 +638,7 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
               className="mx-auto mt-6 inline-flex items-center rounded-full border border-rose-300/50 bg-white/40 px-5 py-2.5 shadow-sm backdrop-blur-sm"
             >
               <span className="font-serif-elegant text-base text-stone-800 [text-shadow:0_1px_4px_rgba(255,255,255,0.9)]">
-                Para <span className="font-semibold">{invitado.nombre}</span>
+                {isGeneric ? "Tu invitación personal" : <>Para <span className="font-semibold">{invitado.nombre}</span></>}
               </span>
             </motion.div>
           )}
@@ -712,7 +855,7 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
         className="xv-snap-section flex min-h-[100dvh] flex-col justify-center px-6 py-16"
       >
         <div className="mx-auto max-w-lg rounded-3xl border border-rose-100 bg-white/70 p-8 shadow-xl shadow-rose-100/50 backdrop-blur-md">
-          {invitado && (
+          {invitado && !isGeneric && (
             <div className="mb-5 rounded-2xl border border-amber-100 bg-amber-50/80 px-4 py-3 text-center">
               <p className="text-xs uppercase tracking-widest text-amber-500">
                 Esta invitación es para
@@ -734,32 +877,60 @@ export default function InvitationClient({ slug, invitacion, invitado }: Props) 
           <Divider />
 
           <div className="space-y-5">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-stone-600">
-                ¿Cuántas personas asistirán?
-              </label>
-              <select
-                value={personas}
-                onChange={(e) => setPersonas(Number(e.target.value))}
-                className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-              >
-                {Array.from({ length: maxPersonas }, (_, i) => i + 1).map((n) => (
-                  <option key={n} value={n}>
-                    {n} {n === 1 ? "persona" : "personas"}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {isGeneric && (
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-stone-600">
+                  ¿Cuál es tu nombre?
+                </label>
+                <input
+                  type="text"
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  placeholder="Escribe tu nombre completo"
+                  className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                />
+              </div>
+            )}
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#25D366] px-4 py-3.5 font-medium text-white shadow-md shadow-green-200/60 transition hover:scale-[1.02] hover:bg-[#1fbc5a] active:scale-[0.98]"
-            >
-              <WhatsAppIcon className="h-5 w-5" />
-              Confirmar por WhatsApp
-            </a>
+            {!isGeneric && (
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-stone-600">
+                  ¿Cuántas personas asistirán?
+                </label>
+                <select
+                  value={personas}
+                  onChange={(e) => setPersonas(Number(e.target.value))}
+                  className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                >
+                  {Array.from({ length: maxPersonas }, (_, i) => i + 1).map((n) => (
+                    <option key={n} value={n}>
+                      {n} {n === 1 ? "persona" : "personas"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {isGeneric && !guestName.trim() ? (
+              <button
+                disabled
+                className="flex w-full cursor-not-allowed items-center justify-center gap-2.5 rounded-xl bg-stone-300 px-4 py-3.5 font-medium text-white"
+              >
+                <WhatsAppIcon className="h-5 w-5" />
+                Confirmar por WhatsApp
+              </button>
+            ) : (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={triggerConfetti}
+                className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#25D366] px-4 py-3.5 font-medium text-white shadow-md shadow-green-200/60 transition hover:scale-[1.02] hover:bg-[#1fbc5a] active:scale-[0.98]"
+              >
+                <WhatsAppIcon className="h-5 w-5" />
+                Confirmar por WhatsApp
+              </a>
+            )}
 
             <p className="text-center text-xs text-stone-400">
               Al confirmar se abrirá WhatsApp con tu asistencia lista para enviar

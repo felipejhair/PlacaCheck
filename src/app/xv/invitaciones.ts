@@ -16,9 +16,10 @@ export interface Lugar {
 }
 
 export interface XvInvitado {
-  slug: string;   // URL-friendly: sin acentos, minúsculas, guiones (ej: "lorenzo-rendon")
-  nombre: string; // Nombre completo para mostrar (ej: "Fam. Lorenzo Rendón")
-  limite: number; // Total de personas incluyendo al titular
+  slug: string;       // URL-friendly: sin acentos, minúsculas, guiones (ej: "lorenzo-rendon")
+  nombre: string;     // Nombre completo para mostrar (ej: "Fam. Lorenzo Rendón")
+  limite: number;     // Total de personas incluyendo al titular
+  isGeneric?: boolean; // Invitación genérica: el invitado escribe su propio nombre
 }
 
 export interface XvInvitacion {
@@ -115,6 +116,7 @@ export const INVITACIONES: Record<string, XvInvitacion> = {
       { slug: "dagoberto-moron",     nombre: "Dagoberto Morón",             limite: 2 },
       { slug: "juan-moron",          nombre: "Juan Morón",                  limite: 2 },
       { slug: "mancha-lara",         nombre: "Fam. Mancha Lara",            limite: 8 },
+      { slug: "invitado",            nombre: "",                             limite: 1, isGeneric: true },
     ],
   },
 };
