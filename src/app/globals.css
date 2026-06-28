@@ -205,16 +205,15 @@
   }
 }
 
-/* --- Scroll por secciones (snap) --- */
+/* --- Scroll por secciones --- */
+/* scroll-snap eliminado: la navegación es 100% JS (botones desktop + touch móvil).
+   Mantener scroll-snap-type: mandatory interfería con scrollTo() programático
+   forzando de vuelta a la sección 0. */
 .xv-snap {
-  scroll-snap-type: y mandatory;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
 .xv-snap::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-.xv-snap-section {
-  scroll-snap-align: start;
+  display: none;
 }

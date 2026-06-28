@@ -116,7 +116,7 @@ export function ShimmerText({
 export function RollingNumber({ value }: { value: number }) {
   const text = String(value).padStart(2, "0");
   return (
-    <span className="relative inline-flex h-[1em] overflow-hidden align-baseline tabular-nums">
+    <span className="relative inline-flex h-[1.3em] overflow-hidden align-baseline tabular-nums">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={text}
@@ -187,9 +187,13 @@ export function Confetti({ active }: { active: boolean }) {
 export function OpeningOverlay({
   nombre,
   onOpen,
+  invitadoNombre,
+  onClose,
 }: {
   nombre: string;
   onOpen: () => void;
+  invitadoNombre?: string;
+  onClose?: () => void;
 }) {
   const [opening, setOpening] = useState(false);
   const [gone, setGone] = useState(false);
@@ -198,7 +202,10 @@ export function OpeningOverlay({
     if (opening) return;
     setOpening(true);
     onOpen();
-    setTimeout(() => setGone(true), 1400);
+    setTimeout(() => {
+      setGone(true);
+      onClose?.();
+    }, 1400);
   };
 
   useEffect(() => {
@@ -227,37 +234,39 @@ export function OpeningOverlay({
               className="group relative outline-none"
               aria-label="Abrir invitación"
             >
-              {/* Sobre */}
+              {/* Wrapper de sombra — sin overflow-hidden para que la sombra no se corte */}
               <motion.div
                 animate={opening ? { scale: 1.06, y: -8 } : { scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative h-52 w-72 rounded-lg bg-gradient-to-b from-rose-100 to-rose-200 shadow-2xl shadow-black/50 sm:h-60 sm:w-96"
+                className="relative h-52 w-72 rounded-lg shadow-2xl shadow-black/50 sm:h-60 sm:w-96"
               >
-                {/* Cuerpo del sobre */}
-                <div className="absolute inset-0 overflow-hidden rounded-lg">
+                {/* Contenedor con clip — recorta los vértices del triángulo a las esquinas redondeadas */}
+                <div className="absolute inset-0 overflow-hidden rounded-lg bg-gradient-to-b from-rose-100 to-rose-200">
+                  {/* Cuerpo del sobre */}
                   <div className="absolute bottom-0 left-0 right-0 top-1/2 bg-rose-50" />
                   <div className="absolute bottom-0 left-0 h-1/2 w-1/2 origin-bottom-left skew-x-[20deg] bg-rose-100/70" />
                   <div className="absolute bottom-0 right-0 h-1/2 w-1/2 origin-bottom-right -skew-x-[20deg] bg-rose-100/70" />
+                  {/* Solapa superior que se abre */}
+                  <motion.div
+                    animate={opening ? { rotateX: 180 } : { rotateX: 0 }}
+                    transition={{ duration: 0.7, ease: "easeInOut" }}
+                    style={{ transformOrigin: "top", transformStyle: "preserve-3d" }}
+                    className="absolute left-0 top-0 z-20 h-1/2 w-full"
+                  >
+                    <div
+                      className="h-full w-full bg-rose-300"
+                      style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
+                    />
+                  </motion.div>
+                  {/* Sello de cera */}
+                  <motion.div
+                    animate={opening ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.4 }}
+                    className="absolute left-1/2 top-1/2 z-30 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-rose-700 font-script text-2xl text-rose-50 shadow-lg ring-4 ring-rose-400/40"
+                  >
+                    {nombre.charAt(0)}
+                  </motion.div>
                 </div>
-                {/* Solapa superior que se abre */}
-                <motion.div
-                  animate={opening ? { rotateX: 180 } : { rotateX: 0 }}
-                  transition={{ duration: 0.7, ease: "easeInOut" }}
-                  style={{ transformOrigin: "top", transformStyle: "preserve-3d" }}
-                  className="absolute left-0 top-0 z-20 h-1/2 w-full origin-top"
-                >
-                  <div
-                    className="h-0 w-0 border-l-[144px] border-r-[144px] border-t-[104px] border-l-transparent border-r-transparent border-t-rose-300 sm:border-l-[192px] sm:border-r-[192px] sm:border-t-[120px]"
-                  />
-                </motion.div>
-                {/* Sello de cera */}
-                <motion.div
-                  animate={opening ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                  className="absolute left-1/2 top-1/2 z-30 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-rose-700 font-script text-2xl text-rose-50 shadow-lg ring-4 ring-rose-400/40"
-                >
-                  {nombre.charAt(0)}
-                </motion.div>
               </motion.div>
             </button>
 
@@ -265,6 +274,21 @@ export function OpeningOverlay({
             <p className="mt-2 text-sm uppercase tracking-[0.35em] text-rose-200/70">
               Mis XV Años
             </p>
+            {invitadoNombre && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.7 }}
+                className="mt-5 rounded-2xl border border-rose-400/25 bg-rose-950/30 px-6 py-3 text-center backdrop-blur-sm"
+              >
+                <p className="text-xs uppercase tracking-[0.25em] text-rose-300/60">
+                  Para
+                </p>
+                <p className="mt-0.5 font-serif-elegant text-lg font-medium text-rose-100">
+                  {invitadoNombre}
+                </p>
+              </motion.div>
+            )}
             {!opening && (
               <motion.p
                 animate={{ opacity: [0.4, 1, 0.4] }}

@@ -1,41 +1,34 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   CalendarHeart,
   Church,
   Clock,
+  Gift,
   Heart,
   MapPin,
   Music,
   PartyPopper,
-  Send,
   Shirt,
   Sparkles,
   VolumeX,
+  X,
 } from "lucide-react";
-import type { XvInvitacion, Lugar } from "../invitaciones";
-import { createRsvp } from "@/actions/xv-actions";
+import type { XvInvitacion, XvInvitado, Lugar } from "../invitaciones";
 import {
   AuroraBackground,
-  Confetti,
   FallingPetals,
   OpeningOverlay,
   RollingNumber,
   ShimmerText,
 } from "./effects";
 
-interface Stats {
-  totalConfirmados: number;
-  totalPersonas: number;
-  mensajes: { nombre: string; mensaje: string; asistira: boolean }[];
-}
-
 interface Props {
   slug: string;
   invitacion: XvInvitacion;
-  initialStats: Stats;
+  invitado?: XvInvitado;
 }
 
 // ---------------------------------------------------------------------------
@@ -83,13 +76,21 @@ function Divider() {
   );
 }
 
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+  );
+}
+
 function LugarCard({
   lugar,
   icon,
   delay = 0,
 }: {
   lugar: Lugar;
-  icon: React.ReactNode;
+  icon: ReactNode;
   delay?: number;
 }) {
   return (
@@ -123,43 +124,6 @@ function LugarCard({
         >
           <MapPin className="h-4 w-4" /> Cómo llegar
         </a>
-      )}
-    </motion.div>
-  );
-}
-
-function GalleryImage({
-  src,
-  alt,
-  index,
-}: {
-  src: string;
-  alt: string;
-  index: number;
-}) {
-  const [failed, setFailed] = useState(!src);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: (index % 3) * 0.08 }}
-      whileHover={{ scale: failed ? 1 : 1.03 }}
-      className="overflow-hidden rounded-2xl shadow-sm"
-    >
-      {failed ? (
-        <div className="flex aspect-[3/4] w-full items-center justify-center rounded-2xl border border-dashed border-rose-200 bg-white/40 text-rose-200 backdrop-blur">
-          <Sparkles className="h-8 w-8" />
-        </div>
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt={alt}
-          onError={() => setFailed(true)}
-          className="aspect-[3/4] w-full object-cover transition-transform duration-700 hover:scale-110"
-        />
       )}
     </motion.div>
   );
@@ -210,26 +174,152 @@ function Interlude({
   );
 }
 
-export default function InvitationClient({ slug, invitacion, initialStats }: Props) {
+// ---------------------------------------------------------------------------
+// Galería tipo Polaroid con lightbox
+// ---------------------------------------------------------------------------
+const POLAROID_ROTATIONS = [-4, 3, -2, 5, -3, 4, -1];
+
+function PolaroidGallery({ fotos, nombre }: { fotos: string[]; nombre: string }) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const items = fotos.length > 0 ? fotos : Array.from({ length: 4 }, () => "");
+
+  return (
+    <>
+      {/* Lightbox */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 px-4"
+          >
+            <motion.img
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 280, damping: 28 }}
+              src={selected}
+              alt={nombre}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[88vh] max-w-full rounded-sm object-contain shadow-2xl"
+            />
+            <button
+              onClick={() => setSelected(null)}
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/25"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Grid de polaroids */}
+      <div className="mx-auto mt-6 max-w-xs px-2 sm:max-w-sm">
+        <div className="grid grid-cols-2 gap-5">
+          {items.map((src, i) => {
+            const rotate = POLAROID_ROTATIONS[i % POLAROID_ROTATIONS.length];
+            const isLastOdd = items.length % 2 !== 0 && i === items.length - 1;
+
+            return (
+              <motion.button
+                key={src || i}
+                onClick={() => src && setSelected(src)}
+                initial={{ opacity: 0, y: 80, rotate: rotate * 2 }}
+                whileInView={{ opacity: 1, y: 0, rotate: rotate }}
+                whileHover={{ scale: 1.12, rotate: 0, y: -10, zIndex: 20 }}
+                whileTap={{ scale: 0.96 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.75, delay: i * 0.13, ease: [0.22, 1, 0.36, 1] }}
+                className={`relative bg-white p-2 pb-8 shadow-xl shadow-stone-400/40 transition-shadow hover:shadow-2xl hover:shadow-rose-300/50 ${
+                  isLastOdd ? "col-span-2 mx-auto w-[45%]" : ""
+                }`}
+              >
+                {src ? (
+                  <img
+                    src={src}
+                    alt={`${nombre} ${i + 1}`}
+                    className="aspect-square w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex aspect-square w-full items-center justify-center bg-rose-50">
+                    <Sparkles className="h-8 w-8 text-rose-200" />
+                  </div>
+                )}
+                {/* Brillo tipo polaroid */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent" />
+              </motion.button>
+            );
+          })}
+        </div>
+        <p className="mt-6 text-center text-xs text-stone-400">
+          Toca una foto para verla completa
+        </p>
+      </div>
+    </>
+  );
+}
+
+export default function InvitationClient({ slug, invitacion, invitado }: Props) {
   const c = useCountdown(invitacion.fechaISO);
-  const [stats, setStats] = useState<Stats>(initialStats);
 
   // --- Contenedor de scroll por secciones ---
+  // scrollRef ya no es el contenedor de scroll; el window es el scroll container.
+  // Se mantiene para referenciar <main> si se necesita.
   const scrollRef = useRef<HTMLElement | null>(null);
 
-  // --- Barra de progreso de scroll ---
-  const { scrollYProgress } = useScroll({ container: scrollRef });
+  // --- Barra de progreso de scroll (window scroll) ---
+  const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // --- Parallax del hero ---
+  // --- Parallax del hero (window scroll sobre el target) ---
   const heroRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress: heroProgress } = useScroll({
-    container: scrollRef,
     target: heroRef,
     offset: ["start start", "end start"],
   });
   const heroY = useTransform(heroProgress, [0, 1], [0, 160]);
   const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
+
+  // --- Navegación por secciones (solo móvil: swipe tipo TikTok) ---
+  const currentSectionRef = useRef(0);
+  const navLocked = useRef(false);
+  const navTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const goTo = useCallback((idx: number) => {
+    if (navLocked.current) return;
+    const sections = Array.from(document.querySelectorAll<HTMLElement>(".xv-snap-section"));
+    const next = Math.max(0, Math.min(sections.length - 1, idx));
+    currentSectionRef.current = next;
+    navLocked.current = true;
+    sections[next].scrollIntoView({ behavior: "smooth", block: "start" });
+    if (navTimer.current) clearTimeout(navTimer.current);
+    navTimer.current = setTimeout(() => {
+      navLocked.current = false;
+    }, 700);
+  }, []);
+
+  // Swipe táctil para móvil — desktop usa scroll nativo sin intervención
+  useEffect(() => {
+    let touchStartY = 0;
+    const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    const onTouchMove = (e: TouchEvent) => { e.preventDefault(); };
+    const onTouchEnd = (e: TouchEvent) => {
+      const delta = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) < 30) return;
+      goTo(currentSectionRef.current + (delta > 0 ? 1 : -1));
+    };
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    document.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      if (navTimer.current) clearTimeout(navTimer.current);
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [goTo]);
 
   // --- Música de fondo ---
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -253,49 +343,30 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
     }
   };
 
-  // --- Formulario RSVP ---
-  const [nombre, setNombre] = useState("");
-  const [asistira, setAsistira] = useState<boolean | null>(null);
-  const [acompanantes, setAcompanantes] = useState(0);
-  const [mensaje, setMensaje] = useState("");
-  const [enviando, setEnviando] = useState(false);
-  const [enviado, setEnviado] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Pausar música al salir / minimizar la pestaña
+  useEffect(() => {
+    const handleVisibility = () => {
+      const audio = audioRef.current;
+      if (document.hidden && audio && !audio.paused) {
+        audio.pause();
+        setPlaying(false);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (!nombre.trim()) {
-      setError("Por favor escribe tu nombre.");
-      return;
-    }
-    if (asistira === null) {
-      setError("Indícanos si podrás asistir.");
-      return;
-    }
-    setEnviando(true);
-    const res = await createRsvp({
-      slug,
-      nombre,
-      asistira,
-      acompanantes: asistira ? acompanantes : 0,
-      mensaje,
-    });
-    setEnviando(false);
+  // --- RSVP por WhatsApp ---
+  const maxPersonas = invitado ? invitado.limite : 10;
+  const [personas, setPersonas] = useState(1);
 
-    if (res.success) {
-      setEnviado(true);
-      setStats((prev) => ({
-        totalConfirmados: prev.totalConfirmados + (asistira ? 1 : 0),
-        totalPersonas: prev.totalPersonas + (asistira ? 1 + acompanantes : 0),
-        mensajes: mensaje.trim()
-          ? [{ nombre: nombre.trim(), mensaje: mensaje.trim(), asistira }, ...prev.mensajes]
-          : prev.mensajes,
-      }));
-    } else {
-      setError(res.error || "Algo salió mal. Inténtalo de nuevo.");
-    }
-  };
+  const whatsappUrl = useMemo(() => {
+    const word = personas === 1 ? "invitado" : "invitados";
+    const nombre = invitado?.nombre ?? "Invitado";
+    const message = `${nombre} confirma asistencia al XV de Arianne con ${personas} ${word}.`;
+    const number = invitacion.whatsappNumero ?? "528182602964";
+    return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+  }, [personas, invitado?.nombre, invitacion.whatsappNumero]);
 
   const countdownItems = [
     { label: "Días", value: c.dias },
@@ -307,22 +378,24 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
   return (
     <main
       ref={scrollRef}
-      className="xv-snap relative h-[100dvh] overflow-y-scroll text-stone-700"
+      className="xv-snap relative text-stone-700"
     >
       <AuroraBackground />
       <FallingPetals count={22} />
 
-      {/* Sobre de apertura — el toque inicial también arranca la música */}
-      <OpeningOverlay nombre={invitacion.nombre} onOpen={startMusic} />
+      {/* Sobre de apertura */}
+      <OpeningOverlay
+        nombre={invitacion.nombre}
+        onOpen={startMusic}
+        invitadoNombre={invitado?.nombre}
+        onClose={() => window.scrollTo({ top: 0 })}
+      />
 
-      {/* Barra de progreso de lectura */}
+      {/* Barra de progreso */}
       <motion.div
         style={{ scaleX: progress }}
         className="fixed left-0 top-0 z-50 h-1 w-full origin-left bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400"
       />
-
-      {/* Confeti al confirmar */}
-      <Confetti active={enviado && asistira === true} />
 
       {invitacion.musicaUrl && (
         <>
@@ -354,7 +427,7 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
               alt={invitacion.nombre}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-rose-50/85 via-rose-50/55 to-amber-50/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-rose-50/70 via-rose-50/80 to-amber-50/92" />
           </div>
         )}
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative z-10">
@@ -362,7 +435,7 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
             initial={{ opacity: 0, letterSpacing: "0.1em" }}
             animate={{ opacity: 1, letterSpacing: "0.3em" }}
             transition={{ duration: 1.2, delay: 0.2 }}
-            className="font-serif-elegant text-lg uppercase tracking-[0.3em] text-rose-400"
+            className="font-serif-elegant text-lg uppercase tracking-[0.3em] text-rose-500 [text-shadow:0_2px_8px_rgba(255,255,255,0.8)]"
           >
             {invitacion.fraseInicial || "Mis XV Años"}
           </motion.p>
@@ -371,7 +444,7 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
             initial={{ opacity: 0, scale: 0.85, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1.1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-script text-7xl leading-tight drop-shadow-sm sm:text-8xl md:text-9xl"
+            className="font-script text-7xl leading-tight drop-shadow sm:text-8xl md:text-9xl"
           >
             <ShimmerText>{invitacion.nombre}</ShimmerText>
           </motion.h1>
@@ -380,21 +453,33 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="font-serif-elegant text-xl tracking-wide text-stone-600"
+            className="font-serif-elegant text-xl tracking-wide text-stone-800 [text-shadow:0_2px_10px_rgba(255,255,255,0.95)]"
           >
             {invitacion.fechaTexto}
           </motion.p>
+          {invitado && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.0 }}
+              className="mx-auto mt-6 inline-flex items-center rounded-full border border-rose-300/50 bg-white/40 px-5 py-2.5 shadow-sm backdrop-blur-sm"
+            >
+              <span className="font-serif-elegant text-base text-stone-800 [text-shadow:0_1px_4px_rgba(255,255,255,0.9)]">
+                Para <span className="font-semibold">{invitado.nombre}</span>
+              </span>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Indicador de scroll */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.8, repeat: Infinity }}
-          className="absolute bottom-10 flex flex-col items-center gap-1 text-rose-300"
+          className="absolute bottom-10 flex flex-col items-center gap-1 text-rose-400"
         >
           <span className="text-xs uppercase tracking-widest">Desliza</span>
-          <div className="h-8 w-5 rounded-full border border-rose-300 p-1">
-            <div className="h-2 w-full rounded-full bg-rose-300" />
+          <div className="h-8 w-5 rounded-full border border-rose-400 p-1">
+            <div className="h-2 w-full rounded-full bg-rose-400" />
           </div>
         </motion.div>
       </section>
@@ -537,17 +622,30 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
           />
         </div>
 
-        {invitacion.dressCode && (
-          <div className="mx-auto mt-8 flex max-w-md items-center justify-center gap-3 rounded-2xl border border-amber-100 bg-amber-50/60 px-6 py-4 text-center backdrop-blur">
-            <Shirt className="h-5 w-5 text-amber-500" />
-            <div>
-              <p className="text-xs uppercase tracking-widest text-amber-500">
-                Código de vestimenta
-              </p>
-              <p className="font-serif-elegant text-lg text-stone-700">
-                {invitacion.dressCode}
-              </p>
-            </div>
+        {(invitacion.dressCode || invitacion.regalo?.length) && (
+          <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-3">
+            {invitacion.dressCode && (
+              <div className="flex items-center gap-3 rounded-2xl border border-amber-100 bg-amber-50/60 px-6 py-4 text-center backdrop-blur">
+                <Shirt className="h-5 w-5 shrink-0 text-amber-500" />
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-amber-500">
+                    Código de vestimenta
+                  </p>
+                  <p className="font-serif-elegant text-lg text-stone-700">
+                    {invitacion.dressCode}
+                  </p>
+                </div>
+              </div>
+            )}
+            {invitacion.regalo?.map((r) => (
+              <div
+                key={r}
+                className="flex items-center gap-3 rounded-2xl border border-rose-100 bg-rose-50/60 px-6 py-4 text-center backdrop-blur"
+              >
+                <Gift className="h-5 w-5 shrink-0 text-rose-400" />
+                <p className="font-serif-elegant text-lg text-stone-700">{r}</p>
+              </div>
+            ))}
           </div>
         )}
       </motion.section>
@@ -571,178 +669,69 @@ export default function InvitationClient({ slug, invitacion, initialStats }: Pro
           Galería
         </h2>
         <Divider />
-        <div className="mx-auto mt-6 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-          {(invitacion.galeria.length > 0
-            ? invitacion.galeria
-            : Array.from({ length: 6 }, () => "")
-          ).map((src, i) => (
-            <GalleryImage
-              key={src || i}
-              src={src}
-              alt={`${invitacion.nombre} ${i + 1}`}
-              index={i}
-            />
-          ))}
-        </div>
+        <PolaroidGallery fotos={invitacion.galeria} nombre={invitacion.nombre} />
       </motion.section>
 
-      {/* ---------------- RSVP ---------------- */}
+      {/* ---------------- RSVP (WhatsApp) ---------------- */}
       <motion.section
         {...reveal}
         className="xv-snap-section flex min-h-[100dvh] flex-col justify-center px-6 py-16"
       >
         <div className="mx-auto max-w-lg rounded-3xl border border-rose-100 bg-white/70 p-8 shadow-xl shadow-rose-100/50 backdrop-blur-md">
+          {invitado && (
+            <div className="mb-5 rounded-2xl border border-amber-100 bg-amber-50/80 px-4 py-3 text-center">
+              <p className="text-xs uppercase tracking-widest text-amber-500">
+                Esta invitación es para
+              </p>
+              <p className="mt-0.5 font-serif-elegant text-lg font-semibold text-stone-700">
+                {invitado.nombre}
+              </p>
+              <p className="text-sm text-stone-500">
+                {invitado.limite === 1
+                  ? "1 lugar reservado"
+                  : `${invitado.limite} lugares reservados`}
+              </p>
+            </div>
+          )}
+
           <h2 className="text-center font-serif-elegant text-3xl text-stone-700">
             Confirma tu asistencia
           </h2>
           <Divider />
 
-          {enviado ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="py-6 text-center"
+          <div className="space-y-5">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-stone-600">
+                ¿Cuántas personas asistirán?
+              </label>
+              <select
+                value={personas}
+                onChange={(e) => setPersonas(Number(e.target.value))}
+                className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+              >
+                {Array.from({ length: maxPersonas }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n} {n === 1 ? "persona" : "personas"}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#25D366] px-4 py-3.5 font-medium text-white shadow-md shadow-green-200/60 transition hover:scale-[1.02] hover:bg-[#1fbc5a] active:scale-[0.98]"
             >
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="mx-auto mb-3 w-fit"
-              >
-                <Heart className="h-12 w-12 fill-rose-300 text-rose-400" />
-              </motion.div>
-              <p className="font-serif-elegant text-xl text-stone-700">
-                {asistira
-                  ? "¡Gracias por confirmar! Nos vemos en la fiesta 💖"
-                  : "Gracias por avisarnos. Te extrañaremos 💕"}
-              </p>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-stone-600">
-                  Tu nombre
-                </label>
-                <input
-                  type="text"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Nombre y apellido"
-                  className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-                />
-              </div>
+              <WhatsAppIcon className="h-5 w-5" />
+              Confirmar por WhatsApp
+            </a>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-stone-600">
-                  ¿Podrás acompañarnos?
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setAsistira(true)}
-                    className={`rounded-xl border px-4 py-3 text-sm font-medium transition ${
-                      asistira === true
-                        ? "border-rose-400 bg-rose-500 text-white shadow-md shadow-rose-200"
-                        : "border-rose-200 bg-white text-stone-600 hover:bg-rose-50"
-                    }`}
-                  >
-                    ¡Sí, ahí estaré!
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAsistira(false)}
-                    className={`rounded-xl border px-4 py-3 text-sm font-medium transition ${
-                      asistira === false
-                        ? "border-stone-400 bg-stone-500 text-white"
-                        : "border-rose-200 bg-white text-stone-600 hover:bg-rose-50"
-                    }`}
-                  >
-                    No podré asistir
-                  </button>
-                </div>
-              </div>
-
-              {asistira === true && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                >
-                  <label className="mb-1.5 block text-sm font-medium text-stone-600">
-                    Acompañantes adicionales
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    max={20}
-                    value={acompanantes}
-                    onChange={(e) => setAcompanantes(parseInt(e.target.value) || 0)}
-                    className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-                  />
-                </motion.div>
-              )}
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-stone-600">
-                  Mensaje para {invitacion.nombre} (opcional)
-                </label>
-                <textarea
-                  value={mensaje}
-                  onChange={(e) => setMensaje(e.target.value)}
-                  rows={3}
-                  placeholder="Déjale unas palabras bonitas..."
-                  className="w-full resize-none rounded-xl border border-rose-200 bg-white px-4 py-3 text-stone-700 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-                />
-              </div>
-
-              {error && <p className="text-sm text-red-500">{error}</p>}
-
-              <button
-                type="submit"
-                disabled={enviando}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-500 px-4 py-3.5 font-medium text-white shadow-md shadow-rose-200 transition hover:scale-[1.02] hover:bg-rose-600 disabled:opacity-60"
-              >
-                {enviando ? (
-                  "Enviando..."
-                ) : (
-                  <>
-                    <Send className="h-4 w-4" /> Confirmar
-                  </>
-                )}
-              </button>
-            </form>
-          )}
-
-          {stats.totalConfirmados > 0 && (
-            <p className="mt-6 text-center text-sm text-stone-500">
-              {stats.totalPersonas}{" "}
-              {stats.totalPersonas === 1
-                ? "persona ha confirmado"
-                : "personas han confirmado"}{" "}
-              su asistencia 🎉
+            <p className="text-center text-xs text-stone-400">
+              Al confirmar se abrirá WhatsApp con tu asistencia lista para enviar
             </p>
-          )}
-        </div>
-
-        {/* Mensajes de los invitados */}
-        {stats.mensajes.length > 0 && (
-          <div className="mx-auto mt-10 max-h-[32vh] max-w-lg space-y-3 overflow-y-auto pr-1">
-            <h3 className="text-center font-serif-elegant text-2xl text-stone-700">
-              Mensajes de cariño
-            </h3>
-            {stats.mensajes.map((m, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="rounded-2xl border border-rose-100 bg-white/60 px-5 py-4 backdrop-blur"
-              >
-                <p className="text-stone-600">&ldquo;{m.mensaje}&rdquo;</p>
-                <p className="mt-2 text-sm font-medium text-rose-400">— {m.nombre}</p>
-              </motion.div>
-            ))}
           </div>
-        )}
+        </div>
       </motion.section>
 
       {/* ---------------- FOOTER ---------------- */}

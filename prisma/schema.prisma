@@ -73,7 +73,8 @@ model Favorite {
 // Confirmaciones de asistencia (RSVP) para las invitaciones de XV años en /xv/[nombre]
 model XvRsvp {
   id           Int      @id @default(autoincrement())
-  slug         String   // Identifica a qué invitación pertenece (ej: "sofia")
+  slug         String   // Identifica a qué invitación pertenece (ej: "arianne")
+  invitadoSlug String?  // Slug del grupo invitado específico (ej: "lorenzo-rendon")
   nombre       String   // Nombre del invitado que confirma
   asistira     Boolean  // true = sí asiste, false = no podrá asistir
   acompanantes Int      @default(0) // Número de acompañantes adicionales
@@ -81,4 +82,5 @@ model XvRsvp {
   createdAt    DateTime @default(now())
 
   @@index([slug])
+  @@index([invitadoSlug])
 }

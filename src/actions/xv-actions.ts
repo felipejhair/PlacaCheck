@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 
 interface RsvpInput {
   slug: string;
+  invitadoSlug?: string;
   nombre: string;
   asistira: boolean;
   acompanantes: number;
@@ -19,6 +20,7 @@ export async function createRsvp(data: RsvpInput) {
     const rsvp = await prisma.xvRsvp.create({
       data: {
         slug: data.slug,
+        invitadoSlug: data.invitadoSlug ?? null,
         nombre: data.nombre.trim(),
         asistira: data.asistira,
         acompanantes: Math.max(0, data.acompanantes || 0),
@@ -56,5 +58,23 @@ export async function getRsvpStats(slug: string) {
   } catch (error) {
     console.error("Error fetching RSVP stats:", error);
     return { totalConfirmados: 0, totalPersonas: 0, mensajes: [] };
+  }
+}
+
+export async function getInvitadoRsvp(xvSlug: string, invitadoSlug: string) {
+  try {
+    const rsvp = await prisma.xvRsvp.findFirst({
+      where: { slug: xvSlug, invitadoSlug },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!rsvp) return null;
+    return {
+      asistira: rsvp.asistira,
+      acompanantes: rsvp.acompanantes,
+      mensaje: rsvp.mensaje,
+    };
+  } catch (error) {
+    console.error("Error fetching invitado RSVP:", error);
+    return null;
   }
 }

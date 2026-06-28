@@ -2,10 +2,9 @@
 //  CONFIGURACIÓN DE INVITACIONES DE XV AÑOS
 // ----------------------------------------------------------------------------
 //  Cada entrada de este objeto genera una invitación en /xv/<slug>.
-//  Por ejemplo, la entrada "sofia" se ve en /xv/sofia
+//  Las invitaciones personalizadas por grupo viven en /xv/<slug>/<invitado>.
 //
-//  Para crear una nueva invitación, copia el bloque de ejemplo y cambia los
-//  datos. Las imágenes de la galería y la música deben colocarse en /public.
+//  Para agregar invitados, edita el array `invitados` dentro de cada entrada.
 // ============================================================================
 
 export interface Lugar {
@@ -14,6 +13,12 @@ export interface Lugar {
   direccion?: string; // Dirección escrita (opcional)
   hora: string; // Ej: "7:00 PM"
   mapsUrl?: string; // Enlace a Google Maps (opcional)
+}
+
+export interface XvInvitado {
+  slug: string;   // URL-friendly: sin acentos, minúsculas, guiones (ej: "lorenzo-rendon")
+  nombre: string; // Nombre completo para mostrar (ej: "Fam. Lorenzo Rendón")
+  limite: number; // Total de personas incluyendo al titular
 }
 
 export interface XvInvitacion {
@@ -32,6 +37,9 @@ export interface XvInvitacion {
   interludios?: { img: string; texto?: string }[]; // Fotos a pantalla completa entre secciones
   galeria: string[]; // Rutas de imágenes en /public (ej: "/xv/sofia/1.jpg")
   musicaUrl?: string; // Ruta de la canción en /public (ej: "/xv/sofia/cancion.mp3")
+  regalo?: string[]; // Tipos de regalo aceptados (ej: ["Regalo", "Sobre"])
+  whatsappNumero?: string; // Número de WhatsApp para confirmaciones (formato: 521XXXXXXXXXX)
+  invitados?: XvInvitado[]; // Lista de grupos/familias invitadas con su cupo
 }
 
 export const INVITACIONES: Record<string, XvInvitacion> = {
@@ -46,7 +54,7 @@ export const INVITACIONES: Record<string, XvInvitacion> = {
       titulo: "Misa",
       lugar: "Parroquia La Sagrada Familia",
       hora: "5:00 PM",
-      mapsUrl: "https://share.google/dn4zvpHl2GHbReCm2",
+      mapsUrl: "https://maps.app.goo.gl/YGwsjQB3pTWPu4LHA",
     },
     recepcion: {
       titulo: "Recepción",
@@ -54,22 +62,60 @@ export const INVITACIONES: Record<string, XvInvitacion> = {
       hora: "A partir de las 8:00 PM",
       mapsUrl: "https://maps.app.goo.gl/Fm8AMrEJYTTSZPe5A",
     },
+    dressCode: "Negro Elegante",
+    regalo: ["Regalo", "Sobre"],
+    whatsappNumero: "528182602964",
     padres: ["Pablo Russell Ayala", "Ariadna Rendón Rojas"],
-    heroImg: "/xv/arianne/1.jpg",
-    retratoImg: "/xv/arianne/7.jpg",
+    heroImg: "/xv/arianne/XV1.jpg",
+    retratoImg: "/xv/arianne/XV9.jpg",
     interludios: [
-      { img: "/xv/arianne/4.jpg" },
-      { img: "/xv/arianne/6.jpg" },
+      { img: "/xv/arianne/XV5.jpg" },
+      { img: "/xv/arianne/XV6.jpg" },
     ],
     galeria: [
-      "/xv/arianne/1.jpg",
-      "/xv/arianne/2.jpg",
-      "/xv/arianne/3.jpg",
-      "/xv/arianne/5.jpg",
-      "/xv/arianne/7.jpg",
-      "/xv/arianne/8.jpg",
+      "/xv/arianne/XV2.jpg",
+      "/xv/arianne/XV3.jpg",
+      "/xv/arianne/XV4.jpg",
+      "/xv/arianne/XV7.jpg",
+      "/xv/arianne/XV8.jpg",
     ],
     musicaUrl: "/xv/arianne/TY.mp3",
+    invitados: [
+      { slug: "lorenzo-rendon",      nombre: "Fam. Lorenzo Rendón",        limite: 4 },
+      { slug: "salinas-rendon",      nombre: "Fam. Salinas Rendón",         limite: 4 },
+      { slug: "hernandez-escamilla", nombre: "Fam. Hernández Escamilla",    limite: 6 },
+      { slug: "yair-hernandez",      nombre: "Yair Hernández Escamilla",    limite: 2 },
+      { slug: "ozorio-rojas",        nombre: "Fam. Ozorio Rojas",           limite: 3 },
+      { slug: "rojas-hernandez",     nombre: "Fam. Rojas Hernández",        limite: 2 },
+      { slug: "cantu-rojas",         nombre: "Fam. Cantú Rojas",            limite: 5 },
+      { slug: "rios-rojas",          nombre: "Fam. Ríos Rojas",             limite: 4 },
+      { slug: "antonio-ramirez",     nombre: "Antonio Ramírez Rojas",       limite: 3 },
+      { slug: "perez-mendoza",       nombre: "Fam. Pérez Mendoza",          limite: 2 },
+      { slug: "castillo-baez",       nombre: "Fam. Castillo Báez",          limite: 5 },
+      { slug: "pina-jaramillo",      nombre: "Fam. Piña Jaramillo",         limite: 2 },
+      { slug: "zapata-rodriguez",    nombre: "Fam. Zapata Rodríguez",       limite: 2 },
+      { slug: "carlos-rodriguez",    nombre: "Sr. Carlos Rodríguez Moreno", limite: 1 },
+      { slug: "julian-rojas",        nombre: "Sr. Julián Rojas García",     limite: 2 },
+      { slug: "melchor-rojas",       nombre: "Sr. Melchor Rojas García",    limite: 1 },
+      { slug: "reyna-russell",       nombre: "Reyna Russell Ayala",         limite: 2 },
+      { slug: "russell-santos-1",    nombre: "Fam. Russell Santos",         limite: 4 },
+      { slug: "russell-santos-2",    nombre: "Fam. Russell Santos",         limite: 4 },
+      { slug: "navarro-tellez",      nombre: "Fam. Navarro Téllez",         limite: 4 },
+      { slug: "castanedo-mendoza",   nombre: "Fam. Castañedo Mendoza",      limite: 2 },
+      { slug: "soto-torres",         nombre: "Fam. Soto Torres",            limite: 5 },
+      { slug: "ferrero-romero",      nombre: "Fam. Ferrero Romero",         limite: 3 },
+      { slug: "osoria-ballesteros",  nombre: "Fam. Osoria Ballesteros",     limite: 2 },
+      { slug: "lopez-ornelas",       nombre: "Fam. López Ornelas",          limite: 4 },
+      { slug: "martinez-arredondo",  nombre: "Fam. Martínez Arredondo",     limite: 2 },
+      { slug: "pina-gonzalez",       nombre: "Fam. Piña González",          limite: 3 },
+      { slug: "garza-zertuche",      nombre: "Fam. Garza Zertuche",         limite: 4 },
+      { slug: "ugalde-quiroga",      nombre: "Fam. Ugalde Quiroga",         limite: 4 },
+      { slug: "garza-villarreal",    nombre: "Fam. Garza Villarreal",       limite: 3 },
+      { slug: "molar-perez",         nombre: "Fam. Molar Pérez",            limite: 5 },
+      { slug: "dagoberto-moron",     nombre: "Dagoberto Morón",             limite: 2 },
+      { slug: "juan-moron",          nombre: "Juan Morón",                  limite: 2 },
+      { slug: "mancha-lara",         nombre: "Fam. Mancha Lara",            limite: 8 },
+    ],
   },
 };
 
@@ -80,4 +126,16 @@ export function getInvitacion(slug: string): XvInvitacion | null {
 
 export function getSlugs(): string[] {
   return Object.keys(INVITACIONES);
+}
+
+export function getInvitado(xvSlug: string, invitadoSlug: string): XvInvitado | null {
+  const inv = getInvitacion(xvSlug);
+  if (!inv?.invitados) return null;
+  const key = decodeURIComponent(invitadoSlug).toLowerCase();
+  return inv.invitados.find((i) => i.slug === key) ?? null;
+}
+
+export function getInvitadoSlugs(xvSlug: string): string[] {
+  const inv = getInvitacion(xvSlug);
+  return inv?.invitados?.map((i) => i.slug) ?? [];
 }
