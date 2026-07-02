@@ -39,6 +39,7 @@ const TOOLS = [
   "Git","Jenkins","Azure DevOps","Kubernetes","IIS","Nexus",
   "Scrum","Agile","Clean Architecture","DDD","REST API","SOAP",
   "NgRx","SignalR","Entity Framework","MongoDB","Firebase","Dialogflow",
+  "Claude Code","Gemini Code",
 ];
 
 const EXPERIENCE = [
@@ -54,12 +55,14 @@ const EXPERIENCE = [
       "Migración de servicios legacy a APIs en .NET.",
       "Desarrollo de nueva plataforma de endosos en Angular.",
       "Pipelines CI/CD con Jenkins, Kubernetes y Azure DevOps.",
+      "Uso de Claude Code y Gemini Code para acelerar desarrollo.",
     ],
     bulletEn: [
       "Maintenance of automotive insurance management systems.",
       "Migration of legacy services to .NET APIs.",
       "New endorsement platform built in Angular.",
       "CI/CD pipelines with Jenkins, Kubernetes and Azure DevOps.",
+      "Use of Claude Code and Gemini Code to accelerate development.",
     ],
     current: true,
   },

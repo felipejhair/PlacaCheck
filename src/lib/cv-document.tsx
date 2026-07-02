@@ -58,7 +58,7 @@ const T = {
         "Migración de servicios legacy a APIs en .NET.",
         "Desarrollo de nueva plataforma de endosos en Angular.",
         "Pipelines CI/CD con Jenkins, Kubernetes y Azure DevOps.",
-        "Uso activo de IA para aumentar productividad.",
+        "Uso de Claude Code y Gemini Code para acelerar desarrollo y aumentar productividad.",
       ],
       vitek: [
         "Análisis de requerimientos y propuestas de solución.",
@@ -114,7 +114,7 @@ const T = {
         "Migration of legacy services to .NET APIs.",
         "New endorsement platform built in Angular.",
         "CI/CD pipelines with Jenkins, Kubernetes and Azure DevOps.",
-        "Active use of AI to increase productivity.",
+        "Use of Claude Code and Gemini Code to accelerate development and boost productivity.",
       ],
       vitek: [
         "Requirements analysis and solution proposals.",
@@ -469,6 +469,7 @@ const TOOLS = [
   "Git","Jenkins","Azure DevOps","Kubernetes","IIS",
   "Scrum","Agile","Clean Architecture","DDD","REST API",
   "NgRx","SignalR","Entity Framework","MongoDB","Firebase",
+  "Claude Code","Gemini Code",
 ];
 
 const EXP_TAGS = {
