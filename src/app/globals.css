@@ -217,3 +217,124 @@
 .xv-snap::-webkit-scrollbar {
   display: none;
 }
+
+/* =========================================================================
+   Efectos de la invitación infantil 1er Añito de Leonardo (/leonardo)
+   ========================================================================= */
+
+@keyframes kidFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(2deg);
+  }
+}
+
+@keyframes kidFloatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(12px) rotate(-2deg);
+  }
+}
+
+@keyframes kidWobble {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-4deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 0.95;
+  }
+  25% {
+    transform: scale(1.1, 0.95) rotate(2deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.95, 1.05) rotate(-2deg);
+    opacity: 0.9;
+  }
+  75% {
+    transform: scale(1.05, 1) rotate(1deg);
+    opacity: 1;
+  }
+}
+
+@keyframes cloudDriftSlow {
+  0% {
+    transform: translateX(-5%);
+  }
+  50% {
+    transform: translateX(5%);
+  }
+  100% {
+    transform: translateX(-5%);
+  }
+}
+
+@keyframes balloonRise {
+  0% {
+    transform: translateY(110vh) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-20vh) scale(1.05);
+    opacity: 0;
+  }
+}
+
+.kid-float {
+  animation: kidFloat 4s ease-in-out infinite;
+}
+
+.kid-float-slow {
+  animation: kidFloat 7s ease-in-out infinite;
+}
+
+.kid-float-rev {
+  animation: kidFloatReverse 5s ease-in-out infinite;
+}
+
+.kid-wobble {
+  animation: kidWobble 3s ease-in-out infinite;
+}
+
+.candle-flame {
+  animation: flameFlicker 1.2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.cloud-drift {
+  animation: cloudDriftSlow 18s ease-in-out infinite;
+}
+
+/* Patrón de confeti y serpentinas para fondo */
+.bg-kids-party {
+  background-color: #fffdf7;
+  background-image: radial-gradient(#ffd166 1.2px, transparent 1.2px), radial-gradient(#06d6a0 1.2px, #fffdf7 1.2px);
+  background-size: 48px 48px;
+  background-position: 0 0, 24px 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kid-float, .kid-float-slow, .kid-float-rev, .kid-wobble, .candle-flame, .cloud-drift {
+    animation: none !important;
+  }
+}

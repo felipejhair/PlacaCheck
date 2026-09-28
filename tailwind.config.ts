@@ -12,6 +12,8 @@ const config: Config = {
             fontFamily: {
                 script: ["var(--font-script)", "cursive"],
                 "serif-elegant": ["var(--font-serif-elegant)", "serif"],
+                kids: ["var(--font-fredoka)", "Nunito", "sans-serif"],
+                friendly: ["var(--font-nunito)", "sans-serif"],
             },
             colors: {
                 background: "hsl(var(--background))",
