@@ -14,6 +14,7 @@ const config: Config = {
                 "serif-elegant": ["var(--font-serif-elegant)", "serif"],
                 kids: ["var(--font-fredoka)", "Nunito", "sans-serif"],
                 friendly: ["var(--font-nunito)", "sans-serif"],
+                doodle: ["var(--font-doodle)", "Patrick Hand", "cursive", "sans-serif"],
             },
             colors: {
                 background: "hsl(var(--background))",

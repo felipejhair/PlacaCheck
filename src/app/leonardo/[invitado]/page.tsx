@@ -22,11 +22,11 @@ export async function generateMetadata({
   const para = invitado ? ` · ${invitado.nombre}` : "";
 
   return {
-    title: `¡Mi 1er Añito! · ${data.festejado.nombre}${para} 🦁🎈`,
-    description: `Estás cordialmente invitado a celebrar el primer año de ${data.festejado.nombre} este ${data.fechaTexto}.`,
+    title: `¡Mi 1er Añito! · ${data.festejado.nombre}${para} 🦁🎈 (... y Felipe 31)`,
+    description: `Estás cordialmente invitado a celebrar el primer año de ${data.festejado.nombre} en Quinta Terraza Santa Rosa este ${data.fechaTexto} de 2:00 PM a 9:00 PM.`,
     openGraph: {
-      title: `¡Mi 1er Añito! · ${data.festejado.nombre}${para} 🦁🎈`,
-      description: `Invitación especial para ${invitado?.nombre ?? "ti"}. ¡Te esperamos el ${data.fechaTexto}!`,
+      title: `¡Mi 1er Añito! · ${data.festejado.nombre}${para} 🦁🎈 (... y Felipe 31)`,
+      description: `Invitación especial para ${invitado?.nombre ?? "ti"}. ¡Te esperamos el ${data.fechaTexto} en Quinta Terraza Santa Rosa!`,
     },
   };
 }

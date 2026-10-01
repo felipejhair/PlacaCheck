@@ -333,8 +333,84 @@
   background-position: 0 0, 24px 24px;
 }
 
+/* =========================================================================
+   Estilo Doodle y Textura de Crayola / Cuaderno de Dibujo
+   ========================================================================= */
+
+.bg-doodle-paper {
+  background-color: #FDFBF7;
+  background-image: 
+    radial-gradient(#e3ded4 1.1px, transparent 1.1px),
+    radial-gradient(#eae4da 1.1px, #FDFBF7 1.1px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+/* Cinta adhesiva decorativa (Washi Tape) */
+.washi-tape {
+  position: absolute;
+  height: 24px;
+  background-color: rgba(254, 240, 138, 0.75);
+  border-left: 2px dashed rgba(0, 0, 0, 0.08);
+  border-right: 2px dashed rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(1px);
+}
+
+.washi-tape-pink {
+  background-color: rgba(254, 205, 211, 0.75);
+}
+
+.washi-tape-blue {
+  background-color: rgba(186, 230, 253, 0.75);
+}
+
+.washi-tape-mint {
+  background-color: rgba(167, 243, 208, 0.75);
+}
+
+/* Marco polaroid con sombra suave de papel */
+.polaroid-card {
+  background: #ffffff;
+  padding: 10px 10px 16px 10px;
+  box-shadow: 0 6px 16px -2px rgba(120, 113, 108, 0.18), 0 2px 6px -1px rgba(120, 113, 108, 0.1);
+  border: 1px solid rgba(231, 229, 228, 0.8);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.polaroid-card:hover {
+  transform: scale(1.02) rotate(0deg) !important;
+  box-shadow: 0 12px 24px -4px rgba(120, 113, 108, 0.24);
+}
+
+/* Trazo de crayola simulado */
+.crayon-stroke {
+  position: relative;
+}
+.crayon-stroke::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: currentColor;
+  opacity: 0.35;
+  border-radius: 9999px;
+  transform: skewX(-12deg);
+}
+
+@keyframes crayonWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-1.5deg) scale(1.01); }
+  75% { transform: rotate(1.5deg) scale(0.99); }
+}
+
+.doodle-wiggle {
+  animation: crayonWiggle 4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .kid-float, .kid-float-slow, .kid-float-rev, .kid-wobble, .candle-flame, .cloud-drift {
+  .kid-float, .kid-float-slow, .kid-float-rev, .kid-wobble, .candle-flame, .cloud-drift, .doodle-wiggle {
     animation: none !important;
   }
 }

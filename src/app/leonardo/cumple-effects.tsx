@@ -14,7 +14,10 @@ class SoundEffects {
   private getContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
     if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
@@ -47,7 +50,7 @@ class SoundEffects {
       osc.start();
       osc.stop(ctx.currentTime + 0.09);
     } catch {
-      // Audio no permitido aún
+      // Audio no disponible
     }
   }
 
@@ -84,7 +87,7 @@ class SoundEffects {
       noise.start();
       noise.stop(ctx.currentTime + 0.35);
     } catch {
-      // Audio error fallback
+      // Audio fallback
     }
   }
 
@@ -148,7 +151,181 @@ class SoundEffects {
 export const soundEffects = new SoundEffects();
 
 // ===========================================================================
-//  Mascota Vectorial: Leoncito con Corona (Leonardo)
+//  Componentes Doodle / Crayon SVG
+// ===========================================================================
+
+export function WashiTape({
+  className = "",
+  color = "yellow",
+}: {
+  className?: string;
+  color?: "yellow" | "pink" | "blue" | "mint";
+}) {
+  const colorMap = {
+    yellow: "bg-amber-300/70 border-amber-400/40",
+    pink: "bg-rose-300/70 border-rose-400/40",
+    blue: "bg-sky-300/70 border-sky-400/40",
+    mint: "bg-emerald-300/70 border-emerald-400/40",
+  };
+
+  return (
+    <div
+      className={`h-5 w-20 rounded-[2px] shadow-sm border-l-2 border-r-2 border-dashed ${colorMap[color]} backdrop-blur-xs select-none pointer-events-none ${className}`}
+    />
+  );
+}
+
+// Corona de crayola
+export function DoodleCrown({ className = "w-10 h-8" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 80" className={`inline-block ${className}`}>
+      <path
+        d="M10 70 L20 20 L50 45 L80 20 L90 70 Z"
+        fill="#facc15"
+        stroke="#eab308"
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="20" cy="20" r="7" fill="#f43f5e" stroke="#e11d48" strokeWidth="2" />
+      <circle cx="50" cy="45" r="7" fill="#38bdf8" stroke="#0284c7" strokeWidth="2" />
+      <circle cx="80" cy="20" r="7" fill="#10b981" stroke="#059669" strokeWidth="2" />
+      <path
+        d="M15 70 Q 50 75 85 70"
+        stroke="#ca8a04"
+        strokeWidth="5"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// Estrella de crayola hecha a mano
+export function DoodleStar({
+  className = "w-6 h-6",
+  color = "#f59e0b",
+}: {
+  className?: string;
+  color?: string;
+}) {
+  return (
+    <svg viewBox="0 0 50 50" className={`inline-block ${className}`}>
+      <path
+        d="M25 5 L30 18 L44 19 L33 28 L37 42 L25 34 L13 42 L17 28 L6 19 L20 18 Z"
+        fill={color}
+        stroke={color}
+        strokeWidth="3"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        opacity="0.9"
+      />
+    </svg>
+  );
+}
+
+// Corazón hecho a mano con crayola
+export function DoodleHeart({
+  className = "w-6 h-6",
+  color = "#f43f5e",
+}: {
+  className?: string;
+  color?: string;
+}) {
+  return (
+    <svg viewBox="0 0 50 50" className={`inline-block ${className}`}>
+      <path
+        d="M25 42 C12 30 5 22 5 14 C5 7 11 3 17 3 C22 3 24 7 25 9 C26 7 28 3 33 3 C39 3 45 7 45 14 C45 22 38 30 25 42 Z"
+        fill={color}
+        stroke={color}
+        strokeWidth="3"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// Sol sonriente doodle
+export function DoodleSun({ className = "w-16 h-16" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 100" className={`inline-block select-none ${className}`}>
+      {/* Rayos de sol garabateados */}
+      <g stroke="#f59e0b" strokeWidth="4" strokeLinecap="round">
+        <line x1="50" y1="8" x2="50" y2="20" />
+        <line x1="50" y1="80" x2="50" y2="92" />
+        <line x1="8" y1="50" x2="20" y2="50" />
+        <line x1="80" y1="50" x2="92" y2="50" />
+        <line x1="20" y1="20" x2="28" y2="28" />
+        <line x1="72" y1="72" x2="80" y2="80" />
+        <line x1="80" y1="20" x2="72" y2="28" />
+        <line x1="28" y1="72" x2="20" y2="80" />
+      </g>
+      {/* Círculo central */}
+      <circle cx="50" cy="50" r="26" fill="#fde047" stroke="#eab308" strokeWidth="4" />
+      {/* Ojitos y sonrisa */}
+      <circle cx="42" cy="46" r="3" fill="#78350f" />
+      <circle cx="58" cy="46" r="3" fill="#78350f" />
+      {/* Mejillas */}
+      <circle cx="37" cy="53" r="3" fill="#f43f5e" opacity="0.5" />
+      <circle cx="63" cy="53" r="3" fill="#f43f5e" opacity="0.5" />
+      <path
+        d="M43 54 Q 50 62 57 54"
+        stroke="#78350f"
+        strokeWidth="3"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// Flecha doodle curva
+export function DoodleArrow({ className = "w-12 h-10" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 60" className={`inline-block ${className}`}>
+      <path
+        d="M10 50 Q 30 10 65 25"
+        stroke="#f59e0b"
+        strokeWidth="4"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M52 18 L68 26 L56 36"
+        stroke="#f59e0b"
+        strokeWidth="4"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// Subrayado garabateado tipo crayola
+export function DoodleSquiggle({
+  className = "w-32 h-3",
+  color = "#f59e0b",
+}: {
+  className?: string;
+  color?: string;
+}) {
+  return (
+    <svg viewBox="0 0 120 16" className={`inline-block ${className}`} preserveAspectRatio="none">
+      <path
+        d="M4 8 Q 20 2, 35 10 T 65 9 T 95 10 T 116 7"
+        stroke={color}
+        strokeWidth="4"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// ===========================================================================
+//  Mascota Vectorial: Leoncito con Corona (Leonardo) - Estilo Doodle Crayon
 // ===========================================================================
 export function LeoLionMascot({ className = "w-40 h-40" }: { className?: string }) {
   return (
@@ -172,10 +349,9 @@ export function LeoLionMascot({ className = "w-40 h-40" }: { className?: string 
           </linearGradient>
         </defs>
 
-        {/* Melena de león suave y esponjosa */}
+        {/* Melena de león suave con contorno tipo dibujo */}
         <g className="kid-wobble" style={{ transformOrigin: "100px 105px" }}>
-          <circle cx="100" cy="105" r="76" fill="url(#maneGrad)" />
-          {/* Ondas decorativas de la melena */}
+          <circle cx="100" cy="105" r="76" fill="url(#maneGrad)" stroke="#b45309" strokeWidth="3" />
           {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
             <circle
               key={deg}
@@ -183,22 +359,24 @@ export function LeoLionMascot({ className = "w-40 h-40" }: { className?: string 
               cy={105 + 72 * Math.sin((deg * Math.PI) / 180)}
               r="22"
               fill="url(#maneGrad)"
+              stroke="#b45309"
+              strokeWidth="2.5"
             />
           ))}
         </g>
 
         {/* Orejitas */}
-        <circle cx="56" cy="62" r="22" fill="#d97706" />
+        <circle cx="56" cy="62" r="22" fill="#d97706" stroke="#b45309" strokeWidth="2.5" />
         <circle cx="56" cy="62" r="13" fill="#fbcfe8" />
-        <circle cx="144" cy="62" r="22" fill="#d97706" />
+        <circle cx="144" cy="62" r="22" fill="#d97706" stroke="#b45309" strokeWidth="2.5" />
         <circle cx="144" cy="62" r="13" fill="#fbcfe8" />
 
         {/* Cara tierna */}
-        <ellipse cx="100" cy="112" rx="58" ry="52" fill="url(#faceGrad)" />
+        <ellipse cx="100" cy="112" rx="58" ry="52" fill="url(#faceGrad)" stroke="#b45309" strokeWidth="3" />
 
-        {/* Mejillas sonrosadas */}
-        <circle cx="68" cy="120" r="10" fill="#f43f5e" opacity="0.35" />
-        <circle cx="132" cy="120" r="10" fill="#f43f5e" opacity="0.35" />
+        {/* Mejillas sonrosadas garabateadas */}
+        <circle cx="68" cy="120" r="11" fill="#f43f5e" opacity="0.45" />
+        <circle cx="132" cy="120" r="11" fill="#f43f5e" opacity="0.45" />
 
         {/* Ojos tiernos y brillantes */}
         <ellipse cx="78" cy="102" rx="7.5" ry="9" fill="#1e293b" />
@@ -209,8 +387,8 @@ export function LeoLionMascot({ className = "w-40 h-40" }: { className?: string 
         <circle cx="120" cy="99" r="3.2" fill="#ffffff" />
         <circle cx="125" cy="105" r="1.5" fill="#ffffff" />
 
-        {/* Naricita en forma de corazón invertido */}
-        <polygon points="100,123 93,115 107,115" fill="#78350f" rx="2" />
+        {/* Naricita */}
+        <polygon points="100,123 93,115 107,115" fill="#78350f" />
 
         {/* Hocico tierno y dientito asomando */}
         <path
@@ -223,16 +401,15 @@ export function LeoLionMascot({ className = "w-40 h-40" }: { className?: string 
         {/* Dientito de 1 añito */}
         <rect x="97" y="127" width="6" height="5" rx="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.8" />
 
-        {/* Corona dorada de Rey del Primer Año */}
+        {/* Corona dorada */}
         <g transform="translate(100, 48) rotate(-4) translate(-100, -48)">
           <path
             d="M72 48 L80 18 L100 32 L120 18 L128 48 Z"
             fill="url(#crownGrad)"
-            stroke="#b45309"
-            strokeWidth="2.5"
+            stroke="#92400e"
+            strokeWidth="3.5"
             strokeLinejoin="round"
           />
-          {/* Gemas en la corona */}
           <circle cx="80" cy="19" r="4.5" fill="#06b6d4" stroke="#0891b2" strokeWidth="1" />
           <circle cx="100" cy="32" r="5" fill="#ec4899" stroke="#db2777" strokeWidth="1" />
           <circle cx="120" cy="19" r="4.5" fill="#10b981" stroke="#059669" strokeWidth="1" />
@@ -292,7 +469,6 @@ export function InteractiveBalloons({ count = 7 }: { count?: number }) {
       prev.map((b) => (b.id === id ? { ...b, popped: true } : b))
     );
 
-    // Respawn después de 4 segundos
     setTimeout(() => {
       setBalloons((prev) =>
         prev.map((b) => (b.id === id ? { ...b, popped: false } : b))
@@ -311,7 +487,7 @@ export function InteractiveBalloons({ count = 7 }: { count?: number }) {
               animate={{ scale: 1.8, opacity: 0 }}
               transition={{ duration: 0.25 }}
               style={{ left: `${b.x}%`, top: "35%" }}
-              className="absolute pointer-events-none flex items-center justify-center font-bold text-amber-500 text-sm"
+              className="absolute pointer-events-none flex items-center justify-center font-doodle font-bold text-amber-500 text-lg"
             >
               💥 ¡POP!
             </motion.div>
@@ -339,16 +515,12 @@ export function InteractiveBalloons({ count = 7 }: { count?: number }) {
               style={{ width: b.size, height: b.size * 1.25 }}
             >
               <svg viewBox="0 0 100 130" className="w-full h-full drop-shadow-md">
-                {/* Cuerpo del globo */}
-                <ellipse cx="50" cy="50" rx="45" ry="48" fill={b.color} />
-                {/* Brillo 3D */}
+                <ellipse cx="50" cy="50" rx="45" ry="48" fill={b.color} stroke="#334155" strokeWidth="2.5" />
                 <ellipse cx="32" cy="32" rx="14" ry="20" fill={b.shineColor} opacity="0.6" transform="rotate(-20 32 32)" />
-                {/* Nudo */}
-                <polygon points="50,96 44,106 56,106" fill={b.color} />
-                {/* Cuerdita ondulada */}
+                <polygon points="50,96 44,106 56,106" fill={b.color} stroke="#334155" strokeWidth="2" />
                 <path
                   d="M50 106 Q46 115 52 122 Q58 130 50 138"
-                  stroke="#94a3b8"
+                  stroke="#64748b"
                   strokeWidth="2.5"
                   fill="none"
                 />
@@ -374,7 +546,6 @@ export function InteractiveCake({
 
   const handleCandleClick = () => {
     if (blown) {
-      // Reencender
       soundEffects.playClick();
       setBlown(false);
       return;
@@ -406,7 +577,6 @@ export function InteractiveCake({
       >
         {/* Velita número 1 con llama parpadeante */}
         <div className="relative flex flex-col items-center">
-          {/* Llama o humito */}
           <div className="h-14 flex items-end justify-center">
             {!blown ? (
               <motion.div
@@ -414,11 +584,8 @@ export function InteractiveCake({
                 transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
                 className="relative flex flex-col items-center"
               >
-                {/* Resplandor exterior */}
                 <div className="absolute -inset-2 rounded-full bg-amber-400/40 blur-md" />
-                {/* Llama externa */}
-                <div className="w-6 h-9 rounded-full bg-gradient-to-t from-amber-500 via-orange-400 to-yellow-200 shadow-lg" />
-                {/* Llama interna */}
+                <div className="w-6 h-9 rounded-full bg-gradient-to-t from-amber-500 via-orange-400 to-yellow-200 shadow-lg border border-amber-600/30" />
                 <div className="absolute bottom-1 w-3 h-5 rounded-full bg-white/90" />
               </motion.div>
             ) : (
@@ -426,50 +593,46 @@ export function InteractiveCake({
                 initial={{ opacity: 0, y: 10, scale: 0.5 }}
                 animate={{ opacity: [0.8, 0.4, 0], y: -25, scale: [1, 1.8, 2.2] }}
                 transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1 }}
-                className="text-stone-400 text-xs font-semibold flex items-center gap-1"
+                className="text-stone-400 font-doodle text-sm font-bold flex items-center gap-1"
               >
                 💨 humito...
               </motion.div>
             )}
           </div>
 
-          {/* Cera de la vela: Número 1 Dorado */}
+          {/* Número 1 Dorado estilo crayola */}
           <div className="relative -mt-1 flex items-center justify-center">
-            <div className="h-16 w-8 rounded-t-lg bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 shadow-md flex items-center justify-center border-2 border-amber-600/30">
+            <div className="h-16 w-8 rounded-t-lg bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 shadow-md flex items-center justify-center border-2 border-stone-800">
               <span className="font-kids font-black text-2xl text-amber-950 drop-shadow-sm">1</span>
             </div>
-            {/* Mecha */}
-            <div className="absolute -top-2.5 w-1 h-2.5 bg-stone-700 rounded-full" />
+            <div className="absolute -top-2.5 w-1 h-2.5 bg-stone-800 rounded-full" />
           </div>
         </div>
 
-        {/* Pastel multi-piso animado */}
+        {/* Pastel multi-piso animado con trazo doodle */}
         <div className="w-56 sm:w-64 -mt-2">
           {/* Piso superior */}
-          <div className="relative h-16 w-44 mx-auto rounded-t-2xl bg-gradient-to-r from-sky-300 via-sky-200 to-sky-300 shadow-md border-b-4 border-sky-400 overflow-hidden">
-            {/* Betún derretido */}
-            <div className="absolute top-0 inset-x-0 h-4 bg-white/90 rounded-b-xl shadow-sm" />
+          <div className="relative h-16 w-44 mx-auto rounded-t-2xl bg-gradient-to-r from-sky-300 via-sky-200 to-sky-300 shadow-md border-2 border-b-4 border-stone-800 overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-4 bg-white/90 rounded-b-xl shadow-sm border-b border-stone-700/20" />
             <div className="absolute top-2 inset-x-0 flex justify-around">
-              <span className="w-2 h-2 rounded-full bg-pink-400" />
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="w-2 h-2 rounded-full bg-indigo-400" />
-              <span className="w-2 h-2 rounded-full bg-rose-400" />
+              <span className="w-2.5 h-2.5 rounded-full bg-pink-400 border border-stone-800" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-stone-800" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-stone-800" />
+              <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 border border-stone-800" />
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-400 border border-stone-800" />
             </div>
-            <div className="h-full flex items-center justify-center pt-2 font-kids font-bold text-sky-800 text-sm">
+            <div className="h-full flex items-center justify-center pt-2 font-doodle font-bold text-sky-900 text-lg">
               LEONARDO
             </div>
           </div>
 
           {/* Piso inferior */}
-          <div className="relative h-20 w-56 sm:w-64 rounded-t-3xl bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 shadow-xl border-b-6 border-amber-300 overflow-hidden">
-            {/* Betún blanco */}
-            <div className="absolute top-0 inset-x-0 h-5 bg-white rounded-b-2xl shadow-sm flex items-center justify-around px-3">
+          <div className="relative h-20 w-56 sm:w-64 rounded-t-3xl bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 shadow-xl border-2 border-b-6 border-stone-800 overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-5 bg-white rounded-b-2xl shadow-sm flex items-center justify-around px-3 border-b border-stone-700/20">
               {Array.from({ length: 9 }).map((_, i) => (
-                <span key={i} className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-inner" />
+                <span key={i} className="w-2.5 h-2.5 rounded-full bg-rose-400 border border-stone-700/40" />
               ))}
             </div>
-            {/* Confetis decorativos del pastel */}
             <div className="absolute inset-0 pt-7 flex flex-wrap gap-3 justify-center opacity-80">
               <span className="w-2 h-4 rounded-full bg-pink-400 rotate-12" />
               <span className="w-2 h-4 rounded-full bg-blue-400 -rotate-45" />
@@ -478,13 +641,13 @@ export function InteractiveCake({
               <span className="w-2 h-4 rounded-full bg-orange-400 rotate-45" />
               <span className="w-2 h-4 rounded-full bg-teal-400 -rotate-30" />
             </div>
-            <div className="relative h-full flex items-center justify-center pt-4 font-kids text-amber-900 font-extrabold text-base tracking-wide">
+            <div className="relative h-full flex items-center justify-center pt-4 font-doodle text-amber-950 font-black text-xl tracking-wide">
               ★ MI 1ER AÑITO ★
             </div>
           </div>
 
           {/* Plato del pastel */}
-          <div className="h-3 w-64 sm:w-72 -mx-4 rounded-full bg-gradient-to-r from-slate-200 via-white to-slate-200 shadow-lg border border-slate-300" />
+          <div className="h-3.5 w-64 sm:w-72 -mx-4 rounded-full bg-gradient-to-r from-stone-200 via-white to-stone-200 shadow-lg border-2 border-stone-800" />
         </div>
       </div>
 
@@ -493,10 +656,10 @@ export function InteractiveCake({
         onClick={handleCandleClick}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`mt-4 px-5 py-2.5 rounded-full font-kids text-sm font-bold shadow-md transition-all flex items-center gap-2 ${
+        className={`mt-4 px-6 py-2.5 rounded-full font-doodle text-base font-bold shadow-md transition-all flex items-center gap-2 border-2 border-stone-800 ${
           blown
-            ? "bg-amber-100 text-amber-800 border-2 border-amber-300 hover:bg-amber-200"
-            : "bg-gradient-to-r from-amber-400 to-orange-400 text-stone-900 hover:shadow-lg hover:shadow-amber-200"
+            ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+            : "bg-gradient-to-r from-amber-400 to-orange-400 text-stone-900 hover:shadow-lg"
         }`}
       >
         {blown ? (
@@ -512,7 +675,7 @@ export function InteractiveCake({
         )}
       </motion.button>
 
-      {/* Mensaje de deseo concedido */}
+      {/* Mensaje de deseo concedido (Sin subtítulo de Felipe como se pidió en el requerimiento #3) */}
       <AnimatePresence>
         {blown && (
           <motion.div
@@ -521,24 +684,20 @@ export function InteractiveCake({
             exit={{ opacity: 0, scale: 0.8 }}
             className="mt-3 text-center"
           >
-            <p className="font-kids text-lg font-bold text-amber-600">
+            <p className="font-doodle text-2xl font-black text-amber-600">
               🎉 ¡Deseo pedido con éxito! 🎉
-            </p>
-            <p className="font-friendly text-xs text-stone-600">
-              (Y un pedacito de pastel asegurado para papá Felipe 😉)
             </p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Confetti al soplar la velita */}
       <KidsConfetti active={showConfetti} />
     </div>
   );
 }
 
 // ===========================================================================
-//  Lluvia de Confeti Infantil (Formitas de fiesta y colores pasteles)
+//  Lluvia de Confeti Infantil (Formitas de fiesta y estrellas)
 // ===========================================================================
 const KIDS_COLORS = [
   "#38bdf8", // Sky blue
@@ -552,7 +711,15 @@ const KIDS_COLORS = [
 
 export function KidsConfetti({ active }: { active: boolean }) {
   const [pieces, setPieces] = useState<
-    { id: number; x: number; color: string; delay: number; rotate: number; size: number; shape: "rect" | "circle" | "star" }[]
+    {
+      id: number;
+      x: number;
+      color: string;
+      delay: number;
+      rotate: number;
+      size: number;
+      shape: "rect" | "circle" | "star";
+    }[]
   >([]);
 
   useEffect(() => {
@@ -564,7 +731,10 @@ export function KidsConfetti({ active }: { active: boolean }) {
       delay: Math.random() * 0.4,
       rotate: Math.random() * 360,
       size: 8 + Math.random() * 8,
-      shape: (i % 3 === 0 ? "star" : i % 2 === 0 ? "circle" : "rect") as "rect" | "circle" | "star",
+      shape: (i % 3 === 0 ? "star" : i % 2 === 0 ? "circle" : "rect") as
+        | "rect"
+        | "circle"
+        | "star",
     }));
     setPieces(items);
   }, [active]);
@@ -601,7 +771,7 @@ export function KidsConfetti({ active }: { active: boolean }) {
 }
 
 // ===========================================================================
-//  Pase VIP / Entrada Mágica de Unboxing
+//  Pase VIP / Entrada Mágica de Unboxing estilo Cuaderno Doodle
 // ===========================================================================
 export function VIPPartyUnbox({
   festejado,
@@ -633,64 +803,64 @@ export function VIPPartyUnbox({
         <motion.div
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.6 }}
-          className="fixed inset-0 z-[90] flex items-center justify-center bg-gradient-to-br from-amber-50 via-sky-50 to-pink-50 p-4"
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-gradient-to-br from-amber-100/90 via-sky-100/80 to-rose-100/90 p-4 backdrop-blur-sm"
         >
-          {/* Fondo festivo con círculos flotantes */}
-          <div className="absolute inset-0 bg-kids-party opacity-60" />
+          <div className="absolute inset-0 bg-doodle-paper opacity-70" />
 
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={opened ? { scale: 1.1, opacity: 0, y: -40 } : { scale: 1, opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative z-10 w-full max-w-sm rounded-3xl border-4 border-amber-300 bg-white p-6 text-center shadow-2xl shadow-amber-200/50"
+            className="relative z-10 w-full max-w-sm rounded-3xl border-3 border-stone-800 bg-[#FFFDF7] p-6 text-center shadow-2xl shadow-stone-400/40"
           >
-            {/* Decoración superior: Banderines de fiesta */}
-            <div className="absolute -top-5 left-6 right-6 flex justify-around">
-              <span className="w-6 h-7 bg-rose-400 clip-flag shadow-sm" />
-              <span className="w-6 h-7 bg-amber-400 clip-flag shadow-sm" />
-              <span className="w-6 h-7 bg-sky-400 clip-flag shadow-sm" />
-              <span className="w-6 h-7 bg-emerald-400 clip-flag shadow-sm" />
-              <span className="w-6 h-7 bg-purple-400 clip-flag shadow-sm" />
+            {/* Cinta washi tape decorativa en la parte superior */}
+            <WashiTape color="yellow" className="absolute -top-3 left-1/2 -translate-x-1/2 -rotate-2" />
+
+            {/* Banderines doodle de fiesta */}
+            <div className="mt-3 flex justify-around">
+              <span className="w-6 h-7 bg-rose-400 shadow-sm border border-stone-800" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
+              <span className="w-6 h-7 bg-amber-400 shadow-sm border border-stone-800" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
+              <span className="w-6 h-7 bg-sky-400 shadow-sm border border-stone-800" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
+              <span className="w-6 h-7 bg-emerald-400 shadow-sm border border-stone-800" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
+              <span className="w-6 h-7 bg-purple-400 shadow-sm border border-stone-800" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
             </div>
 
             {/* Mascota Leonardo */}
-            <div className="mt-3 flex justify-center">
+            <div className="mt-4 flex justify-center">
               <LeoLionMascot className="w-28 h-28" />
             </div>
 
-            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 font-kids text-xs font-bold text-amber-800">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              PASE VIP OFICIAL
+            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border-2 border-stone-800 bg-amber-200 px-3 py-1 font-doodle text-sm font-bold text-stone-900">
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              ¡PASE VIP OFICIAL!
             </div>
 
-            <h2 className="mt-3 font-kids text-2xl font-black text-stone-800">
+            <h2 className="mt-3 font-doodle text-3xl font-black text-stone-900">
               ¡El 1er Añito de {festejado}! 🎈
             </h2>
+            <p className="font-doodle text-base font-bold text-amber-700">
+              ... ¡y Felipe 31! 🎂
+            </p>
 
             {invitadoNombre ? (
-              <div className="mt-2 rounded-2xl bg-sky-50 p-2.5 border border-sky-200">
-                <p className="font-friendly text-xs text-stone-500">Invitación especial para:</p>
-                <p className="font-kids text-base font-bold text-sky-800">{invitadoNombre}</p>
+              <div className="mt-3 rounded-2xl bg-sky-50 p-3 border-2 border-dashed border-sky-400">
+                <p className="font-doodle text-sm text-stone-500">Invitación especial para:</p>
+                <p className="font-doodle text-xl font-bold text-sky-900">{invitadoNombre}</p>
               </div>
             ) : (
-              <p className="mt-1 font-friendly text-sm text-stone-600">
-                ¡Tienes una invitación muy especial a una fiesta llena de magia y sonrisas!
+              <p className="mt-2 font-doodle text-base text-stone-600">
+                ¡Tienes una invitación muy especial a una fiesta llena de juegos y sonrisas!
               </p>
             )}
 
-            {/* Pequeña broma del papá */}
-            <p className="mt-2 text-[11px] font-friendly italic text-stone-400">
-              *(Y sí... papá Felipe también cumple, pero viene de chofer 🚐)*
-            </p>
-
-            {/* Botón de apertura */}
+            {/* Botón de apertura estilo crayola */}
             <motion.button
               onClick={handleOpenClick}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="mt-6 w-full rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 py-3.5 px-4 font-kids text-base font-bold text-white shadow-lg shadow-orange-300/50 transition hover:shadow-xl flex items-center justify-center gap-2"
+              className="mt-6 w-full rounded-2xl border-3 border-stone-800 bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 py-3.5 px-4 font-doodle text-xl font-black text-stone-900 shadow-lg shadow-orange-300/40 transition hover:shadow-xl flex items-center justify-center gap-2"
             >
-              <PartyPopper className="w-5 h-5 text-yellow-100" />
+              <PartyPopper className="w-6 h-6 text-yellow-100" />
               ¡Abrir Mi Invitación! ✨
             </motion.button>
           </motion.div>
@@ -701,14 +871,14 @@ export function VIPPartyUnbox({
 }
 
 // ===========================================================================
-//  Cielo de Fondo: Nubes Flotantes y Destellos
+//  Cielo Doodle de Fondo: Nubes y Destellos Garabateados
 // ===========================================================================
 export function FloatingSky() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Nube 1 */}
-      <div className="absolute top-10 -left-12 opacity-40 cloud-drift">
-        <svg width="220" height="90" viewBox="0 0 200 80" fill="#e0f2fe">
+      {/* Nube 1 con trazo doodle */}
+      <div className="absolute top-10 -left-12 opacity-35 cloud-drift">
+        <svg width="220" height="90" viewBox="0 0 200 80" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="2.5">
           <circle cx="50" cy="50" r="30" />
           <circle cx="85" cy="40" r="38" />
           <circle cx="125" cy="45" r="32" />
@@ -716,9 +886,9 @@ export function FloatingSky() {
         </svg>
       </div>
 
-      {/* Nube 2 */}
+      {/* Nube 2 con trazo doodle */}
       <div className="absolute top-44 -right-16 opacity-35 cloud-drift" style={{ animationDelay: "-9s" }}>
-        <svg width="260" height="110" viewBox="0 0 200 80" fill="#fef3c7">
+        <svg width="260" height="110" viewBox="0 0 200 80" fill="#fef3c7" stroke="#f59e0b" strokeWidth="2.5">
           <circle cx="50" cy="50" r="30" />
           <circle cx="90" cy="35" r="42" />
           <circle cx="135" cy="45" r="35" />
@@ -728,7 +898,7 @@ export function FloatingSky() {
 
       {/* Nube 3 */}
       <div className="absolute top-[65%] -left-10 opacity-30 cloud-drift" style={{ animationDelay: "-4s" }}>
-        <svg width="200" height="80" viewBox="0 0 200 80" fill="#fce7f3">
+        <svg width="200" height="80" viewBox="0 0 200 80" fill="#fce7f3" stroke="#f43f5e" strokeWidth="2">
           <circle cx="45" cy="50" r="28" />
           <circle cx="80" cy="38" r="35" />
           <circle cx="120" cy="45" r="30" />
@@ -756,7 +926,7 @@ export function AudioToggle() {
     <button
       onClick={toggle}
       title={muted ? "Activar efectos de sonido" : "Silenciar efectos de sonido"}
-      className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-stone-700 shadow-lg shadow-stone-300/40 backdrop-blur-md transition-transform hover:scale-110 active:scale-95 border-2 border-amber-200"
+      className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-lg shadow-stone-400/30 backdrop-blur-md transition-transform hover:scale-110 active:scale-95 border-2 border-stone-800"
       aria-label="Alternar sonido"
     >
       {muted ? (
