@@ -111,10 +111,10 @@ export default function CumpleClient({ data, invitado }: Props) {
     setRsvpConfirmado(true);
 
     const nombre = nombreFamilia.trim() || "Nosotros";
-    const msg = `¡Hola ${data.papaColado.nombre}! 🎉 Confirmamos con mucha alegría nuestra asistencia al 1er Añito de ${data.festejado.nombre} para el ${data.fechaTexto} en ${data.lugar.nombre}.
+    const msg = `¡Hola! 🎉 Confirmamos con mucha alegría nuestra asistencia al 1er Añito de ${data.festejado.nombre} para el ${data.fechaTexto} en ${data.lugar.nombre}.
 👨‍👩‍👧‍👦 Familia: ${nombre}
 👥 Asistiremos: ${adultos} adulto(s) y ${ninos} peque(s).
-🎂 ¡Y un abrazo enorme por tus 31 años también! 🥳🎈`;
+🎂 ¡Y un abrazo enorme a Felipe por sus 31 años también! 🥳🎈`;
 
     const encoded = encodeURIComponent(msg);
     const url = `https://wa.me/${data.whatsappNumero}?text=${encoded}`;
@@ -790,7 +790,7 @@ export default function CumpleClient({ data, invitado }: Props) {
             )}
 
             <p className="mt-3 font-doodle text-xs text-stone-500 italic">
-              Se enviará tu confirmación al WhatsApp de papá Felipe.
+              Se enviará tu confirmación directamente al WhatsApp de mamá (81 2466 1526).
             </p>
           </div>
         </div>

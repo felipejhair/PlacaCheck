@@ -160,7 +160,7 @@ export const CUMPLE_DATA: CumpleConfig = {
       rotation: "-rotate-2",
     },
   ],
-  whatsappNumero: "528182602964",
+  whatsappNumero: "528124661526",
   invitados: [
     {
       slug: "familia-perez",
