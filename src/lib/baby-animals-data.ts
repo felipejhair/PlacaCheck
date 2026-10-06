@@ -2,6 +2,7 @@ export interface AnimalFriend {
   id: string;
   name: string;
   species: string;
+  emoji: string;
   title: string;
   bgColor: string;
   accentColor: string;
@@ -19,7 +20,8 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "leo",
     name: "Leo",
     species: "Leoncito",
-    title: "El rey de la selva",
+    emoji: "🦁",
+    title: "¡El rey de la selva!",
     bgColor: "from-amber-400 via-orange-400 to-yellow-300",
     accentColor: "#F59E0B",
     borderColor: "#D97706",
@@ -39,6 +41,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "mimi",
     name: "Mimi",
     species: "Gatita",
+    emoji: "🐱",
     title: "La gatita juguetona",
     bgColor: "from-pink-400 via-rose-300 to-fuchsia-300",
     accentColor: "#EC4899",
@@ -59,6 +62,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "toby",
     name: "Toby",
     species: "Perrito",
+    emoji: "🐶",
     title: "El perrito alegre",
     bgColor: "from-sky-400 via-blue-400 to-indigo-300",
     accentColor: "#0284C7",
@@ -79,6 +83,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "pepe",
     name: "Pepe",
     species: "Ranita",
+    emoji: "🐸",
     title: "La ranita saltarina",
     bgColor: "from-emerald-400 via-green-400 to-teal-300",
     accentColor: "#10B981",
@@ -99,6 +104,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "pandi",
     name: "Pandi",
     species: "Osito Panda",
+    emoji: "🐼",
     title: "El osito pachoncito",
     bgColor: "from-violet-400 via-purple-300 to-pink-300",
     accentColor: "#8B5CF6",
@@ -119,6 +125,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "pio",
     name: "Pío",
     species: "Pollito",
+    emoji: "🐥",
     title: "El pollito cantor",
     bgColor: "from-yellow-300 via-amber-300 to-orange-300",
     accentColor: "#EAB308",
@@ -139,6 +146,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "bunny",
     name: "Bunny",
     species: "Conejito",
+    emoji: "🐰",
     title: "El conejito saltarín",
     bgColor: "from-teal-300 via-cyan-300 to-sky-300",
     accentColor: "#14B8A6",
@@ -159,6 +167,7 @@ export const ANIMAL_FRIENDS: AnimalFriend[] = [
     id: "trompi",
     name: "Trompi",
     species: "Elefantito",
+    emoji: "🐘",
     title: "El elefantito azul",
     bgColor: "from-blue-300 via-indigo-300 to-purple-300",
     accentColor: "#3B82F6",

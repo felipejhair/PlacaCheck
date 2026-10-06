@@ -10,7 +10,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Teléfono de Animalitos · Modo Bebé",
+  title: "Teléfono de Animalitos 🐾📞 · Modo Bebé",
   description: "Teléfono interactivo para bebés con botones grandes, llamadas mágicas y voces tiernas tipo Animal Crossing.",
   icons: {
     icon: "/favicon.ico",

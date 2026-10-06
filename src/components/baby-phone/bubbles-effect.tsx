@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { babySoundEngine } from "@/lib/baby-sound-engine";
-import { StarIcon, HeartIcon, SparkleIcon, BalloonIcon } from "./baby-icons";
 
 interface Bubble {
   id: number;
@@ -11,16 +10,15 @@ interface Bubble {
   y: number;
   size: number;
   color: string;
+  emoji?: string;
   speed: number;
 }
-
-type ParticleType = "star" | "heart" | "balloon";
 
 interface TouchPop {
   id: number;
   x: number;
   y: number;
-  type: ParticleType;
+  emoji: string;
 }
 
 export const BubblesEffect: React.FC = () => {
@@ -72,12 +70,12 @@ export const BubblesEffect: React.FC = () => {
 
     babySoundEngine.playPop();
 
-    const types: ParticleType[] = ["star", "heart", "balloon"];
+    const emojis = ["⭐", "✨", "🎈", "💖", "🌸", "🎵", "🍭", "🍀"];
     const newPop: TouchPop = {
       id: Date.now() + Math.random(),
       x: clientX,
       y: clientY,
-      type: types[Math.floor(Math.random() * types.length)],
+      emoji: emojis[Math.floor(Math.random() * emojis.length)],
     };
 
     setPops((prev) => [...prev.slice(-8), newPop]);
@@ -91,18 +89,6 @@ export const BubblesEffect: React.FC = () => {
     e.stopPropagation();
     babySoundEngine.playPop();
     setBubbles((prev) => prev.filter((b) => b.id !== bubbleId));
-  };
-
-  const renderParticle = (type: ParticleType) => {
-    switch (type) {
-      case "heart":
-        return <HeartIcon className="w-10 h-10 drop-shadow-md" />;
-      case "star":
-        return <StarIcon className="w-10 h-10 drop-shadow-md" />;
-      case "balloon":
-      default:
-        return <BalloonIcon className="w-10 h-10 drop-shadow-md" />;
-    }
   };
 
   return (
@@ -140,19 +126,19 @@ export const BubblesEffect: React.FC = () => {
         </motion.div>
       ))}
 
-      {/* Screen Tap SVG Particle Bursts */}
+      {/* Screen Tap Sparkle Bursts */}
       <AnimatePresence>
         {pops.map((p) => (
           <motion.div
             key={p.id}
             initial={{ scale: 0.3, opacity: 1, y: 0 }}
-            animate={{ scale: 2.0, opacity: 0, y: -70 }}
+            animate={{ scale: 2.2, opacity: 0, y: -70 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
             style={{ left: p.x - 20, top: p.y - 20 }}
-            className="absolute pointer-events-none select-none z-40"
+            className="absolute pointer-events-none text-4xl select-none z-40 drop-shadow-md"
           >
-            {renderParticle(p.type)}
+            {p.emoji}
           </motion.div>
         ))}
       </AnimatePresence>

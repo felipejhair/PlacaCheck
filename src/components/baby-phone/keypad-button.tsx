@@ -6,7 +6,8 @@ import { babySoundEngine } from "@/lib/baby-sound-engine";
 
 interface KeypadButtonProps {
   value: string;
-  icon?: React.ReactNode;
+  subIcon?: string;
+  subLabel?: string;
   colorBg: string;
   colorBorder: string;
   colorText: string;
@@ -16,7 +17,7 @@ interface KeypadButtonProps {
 
 export const KeypadButton: React.FC<KeypadButtonProps> = ({
   value,
-  icon,
+  subIcon,
   colorBg,
   colorBorder,
   colorText,
@@ -46,7 +47,7 @@ export const KeypadButton: React.FC<KeypadButtonProps> = ({
       onClick={handleClick}
       disabled={disabled}
       type="button"
-      className={`relative select-none flex flex-col items-center justify-center rounded-3xl w-full h-[74px] xs:h-[82px] sm:h-[94px] shadow-lg border-b-[6px] transition-all cursor-pointer font-bold ${colorBg} ${colorBorder} ${colorText}`}
+      className={`relative select-none flex flex-col items-center justify-center rounded-3xl w-full h-[72px] xs:h-[80px] sm:h-[92px] shadow-lg border-b-[6px] transition-all cursor-pointer font-bold ${colorBg} ${colorBorder} ${colorText}`}
       style={{
         touchAction: "manipulation",
       }}
@@ -59,11 +60,11 @@ export const KeypadButton: React.FC<KeypadButtonProps> = ({
         {value}
       </span>
 
-      {/* Custom SVG Icon */}
-      {icon && (
-        <div className="mt-1 flex items-center justify-center filter drop-shadow-sm">
-          {icon}
-        </div>
+      {/* Sub icon / emoji */}
+      {subIcon && (
+        <span className="text-base sm:text-lg leading-none mt-0.5 filter drop-shadow-sm">
+          {subIcon}
+        </span>
       )}
     </motion.button>
   );

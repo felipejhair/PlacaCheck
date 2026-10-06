@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { babySoundEngine } from "@/lib/baby-sound-engine";
 import { AnimalFriend } from "@/lib/baby-animals-data";
-import { HeartIcon, StarIcon, BalloonIcon } from "./baby-icons";
 
 interface AnimalAvatarProps {
   animal: AnimalFriend;
@@ -97,16 +96,10 @@ export const AnimalAvatar: React.FC<AnimalAvatarProps> = ({
             animate={{ opacity: 0, scale: 1.8, y: -90, x: (Math.random() - 0.5) * 60 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="absolute pointer-events-none z-30"
-            style={{ left: effect.x - 14, top: effect.y - 14 }}
+            className="absolute pointer-events-none z-30 text-3xl"
+            style={{ left: effect.x, top: effect.y }}
           >
-            {effect.id % 3 === 0 ? (
-              <HeartIcon className="w-8 h-8" />
-            ) : effect.id % 3 === 1 ? (
-              <StarIcon className="w-8 h-8" />
-            ) : (
-              <BalloonIcon className="w-8 h-8" />
-            )}
+            {["💖", "⭐", "✨", "🌸", "🎈"][Math.floor(Math.random() * 5)]}
           </motion.div>
         ))}
       </AnimatePresence>
@@ -154,7 +147,7 @@ interface SVGProps {
 const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpeaking }) => {
   switch (animalId) {
     case "leo":
-      // Leo el Leoncito
+      // Leo el Leoncito 🦁
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Fluffy Mane */}
@@ -213,7 +206,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
       );
 
     case "mimi":
-      // Mimi la Gatita
+      // Mimi la Gatita 🐱
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Ears */}
@@ -269,7 +262,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
       );
 
     case "toby":
-      // Toby el Perrito
+      // Toby el Perrito 🐶
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Floppy Ears */}
@@ -319,7 +312,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
       );
 
     case "pepe":
-      // Pepe la Ranita
+      // Pepe la Ranita 🐸
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Big Eye Bulges */}
@@ -362,7 +355,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
       );
 
     case "pandi":
-      // Pandi el Panda
+      // Pandi el Panda 🐼
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Black Ears */}
@@ -408,7 +401,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
       );
 
     case "pio":
-      // Pío el Pollito
+      // Pío el Pollito 🐥
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Head Feathers tuft */}
@@ -451,7 +444,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
       );
 
     case "bunny":
-      // Bunny el Conejito
+      // Bunny el Conejito 🐰
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Long Ears */}
@@ -502,7 +495,7 @@ const AnimalSVG: React.FC<SVGProps> = ({ animalId, isBlinking, mouthOpen, isSpea
 
     case "trompi":
     default:
-      // Trompi el Elefantito
+      // Trompi el Elefantito 🐘
       return (
         <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
           {/* Big Ears */}

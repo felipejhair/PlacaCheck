@@ -11,6 +11,8 @@ import {
   Minimize2,
   Delete,
   Sparkles,
+  Music,
+  Heart,
   RotateCcw,
   Users,
   Home,
@@ -26,23 +28,6 @@ import { babySoundEngine } from "@/lib/baby-sound-engine";
 import { AnimalAvatar } from "./animal-avatar";
 import { KeypadButton } from "./keypad-button";
 import { BubblesEffect } from "./bubbles-effect";
-import {
-  AppleIcon,
-  BananaIcon,
-  StrawberryIcon,
-  ToyCarIcon,
-  StarIcon,
-  BalloonIcon,
-  RocketIcon,
-  PuppyPawIcon,
-  KittyPawIcon,
-  MusicNoteIcon,
-  UnicornIcon,
-  HeartIcon,
-  DiceIcon,
-  BellIcon,
-  MiniAnimalAvatar,
-} from "./baby-icons";
 
 export default function BabyPhoneClient() {
   const [dialedNumber, setDialedNumber] = useState<string>("");
@@ -59,20 +44,20 @@ export default function BabyPhoneClient() {
 
   const callTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Keypad definitions with bright baby colors and custom SVG icons
+  // Keypad definitions with bright baby colors and icons
   const keys = [
-    { value: "1", icon: <AppleIcon className="w-6 h-6" />, bg: "bg-red-400 hover:bg-red-500", border: "border-red-600", text: "text-white" },
-    { value: "2", icon: <BananaIcon className="w-6 h-6" />, bg: "bg-amber-400 hover:bg-amber-500", border: "border-amber-600", text: "text-amber-950" },
-    { value: "3", icon: <StrawberryIcon className="w-6 h-6" />, bg: "bg-rose-400 hover:bg-rose-500", border: "border-rose-600", text: "text-white" },
-    { value: "4", icon: <ToyCarIcon className="w-6 h-6" />, bg: "bg-blue-400 hover:bg-blue-500", border: "border-blue-600", text: "text-white" },
-    { value: "5", icon: <StarIcon className="w-6 h-6" />, bg: "bg-yellow-400 hover:bg-yellow-500", border: "border-yellow-600", text: "text-yellow-950" },
-    { value: "6", icon: <BalloonIcon className="w-6 h-6" />, bg: "bg-purple-400 hover:bg-purple-500", border: "border-purple-600", text: "text-white" },
-    { value: "7", icon: <RocketIcon className="w-6 h-6" />, bg: "bg-emerald-400 hover:bg-emerald-500", border: "border-emerald-600", text: "text-white" },
-    { value: "8", icon: <PuppyPawIcon className="w-6 h-6" />, bg: "bg-orange-400 hover:bg-orange-500", border: "border-orange-600", text: "text-white" },
-    { value: "9", icon: <KittyPawIcon className="w-6 h-6" />, bg: "bg-teal-400 hover:bg-teal-500", border: "border-teal-600", text: "text-white" },
-    { value: "*", icon: <MusicNoteIcon className="w-6 h-6" />, bg: "bg-indigo-400 hover:bg-indigo-500", border: "border-indigo-600", text: "text-white" },
-    { value: "0", icon: <UnicornIcon className="w-6 h-6" />, bg: "bg-fuchsia-400 hover:bg-fuchsia-500", border: "border-fuchsia-600", text: "text-white" },
-    { value: "#", icon: <HeartIcon className="w-6 h-6" />, bg: "bg-pink-400 hover:bg-pink-500", border: "border-pink-600", text: "text-white" },
+    { value: "1", subIcon: "🍎", bg: "bg-red-400 hover:bg-red-500", border: "border-red-600", text: "text-white" },
+    { value: "2", subIcon: "🍌", bg: "bg-amber-400 hover:bg-amber-500", border: "border-amber-600", text: "text-amber-950" },
+    { value: "3", subIcon: "🍓", bg: "bg-rose-400 hover:bg-rose-500", border: "border-rose-600", text: "text-white" },
+    { value: "4", subIcon: "🚗", bg: "bg-blue-400 hover:bg-blue-500", border: "border-blue-600", text: "text-white" },
+    { value: "5", subIcon: "🌟", bg: "bg-yellow-400 hover:bg-yellow-500", border: "border-yellow-600", text: "text-yellow-950" },
+    { value: "6", subIcon: "🎈", bg: "bg-purple-400 hover:bg-purple-500", border: "border-purple-600", text: "text-white" },
+    { value: "7", subIcon: "🚀", bg: "bg-emerald-400 hover:bg-emerald-500", border: "border-emerald-600", text: "text-white" },
+    { value: "8", subIcon: "🐶", bg: "bg-orange-400 hover:bg-orange-500", border: "border-orange-600", text: "text-white" },
+    { value: "9", subIcon: "🐱", bg: "bg-teal-400 hover:bg-teal-500", border: "border-teal-600", text: "text-white" },
+    { value: "*", subIcon: "🎵", bg: "bg-indigo-400 hover:bg-indigo-500", border: "border-indigo-600", text: "text-white" },
+    { value: "0", subIcon: "🦄", bg: "bg-fuchsia-400 hover:bg-fuchsia-500", border: "border-fuchsia-600", text: "text-white" },
+    { value: "#", subIcon: "💖", bg: "bg-pink-400 hover:bg-pink-500", border: "border-pink-600", text: "text-white" },
   ];
 
   // Call timer counter
@@ -117,6 +102,13 @@ export default function BabyPhoneClient() {
     setDialedNumber((prev) => prev.slice(0, -1));
   };
 
+  // Clear all
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    babySoundEngine.playPop();
+    setDialedNumber("");
+  };
+
   // Trigger magic melody
   const playMagicMelody = () => {
     const notes = ["1", "3", "5", "8", "6", "5", "8"];
@@ -128,7 +120,7 @@ export default function BabyPhoneClient() {
     triggerHeartShower();
   };
 
-  // Heart & Star shower animation
+  // Heart shower animation
   const triggerHeartShower = () => {
     setShowConfetti(true);
     babySoundEngine.playGiggle();
@@ -263,11 +255,11 @@ export default function BabyPhoneClient() {
       {/* Floating Bubbles & Sparkles Background */}
       <BubblesEffect />
 
-      {/* SVG Confetti Shower */}
+      {/* Confetti / Hearts Shower */}
       <AnimatePresence>
         {showConfetti && (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-            {Array.from({ length: 24 }).map((_, i) => (
+            {Array.from({ length: 28 }).map((_, i) => (
               <motion.div
                 key={i}
                 initial={{
@@ -282,15 +274,9 @@ export default function BabyPhoneClient() {
                   scale: 1.2,
                 }}
                 transition={{ duration: 1.8 + Math.random(), ease: "easeIn" }}
-                className="absolute"
+                className="absolute text-4xl"
               >
-                {i % 3 === 0 ? (
-                  <StarIcon className="w-8 h-8" />
-                ) : i % 3 === 1 ? (
-                  <HeartIcon className="w-8 h-8" />
-                ) : (
-                  <BalloonIcon className="w-8 h-8" />
-                )}
+                {["⭐", "💖", "🎉", "🌈", "🎈", "🌸", "🍭"][i % 7]}
               </motion.div>
             ))}
           </div>
@@ -351,24 +337,22 @@ export default function BabyPhoneClient() {
             >
               {/* DISPLAY SCREEN */}
               <div className="bg-gradient-to-r from-violet-100 via-pink-100 to-amber-100 border-2 sm:border-3 border-pink-200 rounded-3xl p-3 sm:p-4 shadow-inner flex flex-col justify-center min-h-[90px] xs:min-h-[105px] relative overflow-hidden">
-                {/* Animal Picker Header */}
+                {/* Animal Picker Chips Header */}
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     Amigo seleccionado:
                   </span>
                   {selectedAnimal ? (
                     <button
                       onClick={() => setSelectedAnimal(null)}
-                      className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-pink-700 bg-pink-100 hover:bg-pink-200 px-2 py-0.5 rounded-full font-bold"
+                      className="text-[10px] sm:text-xs text-pink-600 bg-pink-100 hover:bg-pink-200 px-2 py-0.5 rounded-full font-bold"
                     >
-                      <DiceIcon className="w-3.5 h-3.5" />
-                      <span>Sorpresa</span>
+                      ¡Sorpresa! 🎲
                     </button>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-full font-bold animate-pulse">
-                      <DiceIcon className="w-3.5 h-3.5" />
-                      <span>Cualquiera</span>
+                    <span className="text-[10px] sm:text-xs text-amber-700 bg-amber-200/80 px-2 py-0.5 rounded-full font-bold animate-pulse">
+                      ¡Cualquiera! 🎲
                     </span>
                   )}
                 </div>
@@ -384,17 +368,14 @@ export default function BabyPhoneClient() {
                       <div className="flex items-center gap-2">
                         {selectedAnimal ? (
                           <div className="flex items-center gap-2">
-                            <MiniAnimalAvatar animalId={selectedAnimal.id} className="w-7 h-7" />
+                            <span className="text-2xl">{selectedAnimal.emoji}</span>
                             <span className="text-base sm:text-lg font-bold text-slate-700">
                               Llamar a {selectedAnimal.name}
                             </span>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-2">
-                            <PuppyPawIcon className="w-6 h-6 flex-shrink-0" />
-                            <span className="text-xs sm:text-sm font-bold text-slate-600 leading-tight">
-                              Toca los números y pulsa el botón verde para llamar
-                            </span>
+                          <div className="text-xs sm:text-sm font-bold text-slate-600 leading-tight">
+                            ¡Toca los números y pulsa el botón verde para llamar! 🐾📞
                           </div>
                         )}
                       </div>
@@ -422,13 +403,13 @@ export default function BabyPhoneClient() {
                     babySoundEngine.playPop();
                     setSelectedAnimal(null);
                   }}
-                  className={`flex-shrink-0 px-2.5 py-1.5 rounded-2xl flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm ${
+                  className={`flex-shrink-0 px-2.5 py-1.5 rounded-2xl flex items-center gap-1 text-xs font-bold transition-all shadow-sm ${
                     selectedAnimal === null
                       ? "bg-amber-400 text-amber-950 ring-2 ring-amber-500 scale-105"
                       : "bg-white/70 text-slate-600 hover:bg-white"
                   }`}
                 >
-                  <DiceIcon className="w-4 h-4" />
+                  <span className="text-base">🎲</span>
                   <span>Sorpresa</span>
                 </button>
 
@@ -442,26 +423,26 @@ export default function BabyPhoneClient() {
                         babySoundEngine.playPop();
                         setSelectedAnimal(animal);
                       }}
-                      className={`flex-shrink-0 px-2.5 py-1.5 rounded-2xl flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm ${
+                      className={`flex-shrink-0 px-2.5 py-1.5 rounded-2xl flex items-center gap-1 text-xs font-bold transition-all shadow-sm ${
                         isSelected
                           ? "bg-primary text-white ring-2 ring-primary scale-105"
                           : "bg-white/70 text-slate-700 hover:bg-white"
                       }`}
                     >
-                      <MiniAnimalAvatar animalId={animal.id} className="w-5 h-5" />
+                      <span className="text-base">{animal.emoji}</span>
                       <span>{animal.name}</span>
                     </button>
                   );
                 })}
               </div>
 
-              {/* 3x4 KEYPAD GRID WITH SVG ICONS */}
+              {/* 3x4 KEYPAD GRID */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3 py-1 sm:py-2">
                 {keys.map((k) => (
                   <KeypadButton
                     key={k.value}
                     value={k.value}
-                    icon={k.icon}
+                    subIcon={k.subIcon}
                     colorBg={k.bg}
                     colorBorder={k.border}
                     colorText={k.text}
@@ -495,7 +476,7 @@ export default function BabyPhoneClient() {
                     <Phone className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-white" />
                   </div>
                   <span>LLAMAR</span>
-                  <PuppyPawIcon className="w-8 h-8" />
+                  <span className="text-2xl sm:text-3xl">🐾</span>
                 </motion.button>
               </div>
             </motion.div>
@@ -521,7 +502,7 @@ export default function BabyPhoneClient() {
                 <p className="text-sm font-semibold text-slate-500">{activeAnimal.title}</p>
               </div>
 
-              {/* Pulsing Avatar */}
+              {/* Pulsing Avatar Silhouette */}
               <div className="relative my-6 flex items-center justify-center">
                 <motion.div
                   animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.7, 0.3] }}
@@ -537,10 +518,9 @@ export default function BabyPhoneClient() {
                 </motion.div>
               </div>
 
-              {/* Cartoon Ringing Text with Bell SVG */}
-              <div className="flex items-center justify-center gap-2 text-xl sm:text-2xl font-black text-emerald-600 animate-pulse">
-                <BellIcon className="w-7 h-7" />
-                <span>Riiiing... Riiiing!</span>
+              {/* Cartoon Ringing Text */}
+              <div className="text-xl sm:text-2xl font-black text-emerald-600 animate-pulse">
+                🔔 Riiiing... Riiiing! 🎶
               </div>
 
               {/* Cancel / Hang up Button */}
@@ -569,8 +549,8 @@ export default function BabyPhoneClient() {
             >
               {/* Call Header Bar */}
               <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 border-2 border-emerald-200 rounded-2xl px-3 py-2 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-2.5">
-                  <MiniAnimalAvatar animalId={activeAnimal.id} className="w-8 h-8" />
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{activeAnimal.emoji}</span>
                   <div className="text-left">
                     <div className="text-sm font-black text-slate-800 leading-tight">
                       {activeAnimal.name}
@@ -606,9 +586,8 @@ export default function BabyPhoneClient() {
               {/* Center Stage: Interactive Animated Animal Avatar */}
               <div className="flex-1 flex flex-col items-center justify-center my-1 relative">
                 <div className="text-center mb-1">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-pink-600 uppercase tracking-widest bg-pink-100 px-3 py-0.5 rounded-full">
-                    <HeartIcon className="w-3.5 h-3.5" />
-                    <span>¡Tócame para hacerme cosquillas!</span>
+                  <span className="text-xs font-extrabold text-pink-500 uppercase tracking-widest bg-pink-100 px-3 py-0.5 rounded-full">
+                    ¡Tócame para hacerme cosquillas! 💕
                   </span>
                 </div>
 
@@ -651,7 +630,7 @@ export default function BabyPhoneClient() {
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-black text-xs transition-transform active:scale-95 shadow-sm"
                   >
                     <Users className="w-3.5 h-3.5" />
-                    <span>Otro amigo</span>
+                    <span>Otro amigo 🐾</span>
                   </button>
                 </div>
               </div>
@@ -667,6 +646,7 @@ export default function BabyPhoneClient() {
                 >
                   <PhoneOff className="w-7 h-7 fill-white" />
                   <span>COLGAR</span>
+                  <span className="text-2xl">👋</span>
                 </motion.button>
               </div>
             </motion.div>
@@ -674,10 +654,9 @@ export default function BabyPhoneClient() {
         </AnimatePresence>
       </div>
 
-      {/* Footer note */}
-      <footer className="relative z-20 mt-3 text-center text-xs font-bold text-slate-600/80 flex items-center justify-center gap-1.5">
-        <PuppyPawIcon className="w-4 h-4" />
-        <span>Teléfono Mágico para Bebé · Con amor para divertirse jugando</span>
+      {/* Sweet Footer note */}
+      <footer className="relative z-20 mt-3 text-center text-xs font-bold text-slate-600/80">
+        Teléfono Mágico para Bebé 🐾 · Con amor para divertirse jugando
       </footer>
     </div>
   );
