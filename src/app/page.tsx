@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Search, Shield, MessageSquare, Star, LogIn, Heart } from "lucide-react";
+import { PuppyPawIcon } from "@/components/baby-phone/baby-icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth-provider";
@@ -62,6 +64,17 @@ export default function Home() {
         >
           <Shield className="w-6 h-6" />
         </Button>
+
+        <Link href="/bebe" className="inline-block">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full w-12 h-12 shadow-lg transition-all backdrop-blur-md bg-amber-500/15 hover:bg-amber-500/25 border-amber-500/30 text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 border flex items-center justify-center animate-bounce"
+            title={t({ es: "Teléfono de Animalitos para Bebé", en: "Baby Animal Phone" })}
+          >
+            <PuppyPawIcon className="w-7 h-7" />
+          </Button>
+        </Link>
       </div>
 
       {/* Auth Control - Absolute Top Right */}
